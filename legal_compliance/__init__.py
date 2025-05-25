@@ -8,7 +8,7 @@ import uuid
 import logging
 from typing import Dict, List, Any, Optional
 from datetime import datetime
-
+from .legal_rag_engine import LegalRAGEngine as FixedLegalRAGEngine
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("legal_compliance")

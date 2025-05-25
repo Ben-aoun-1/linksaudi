@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# system_initializer.py - FIXED system initialization with correct imports
+# system_initializer.py - UPDATED system initialization with FIXED legal RAG integration
 
 import os
 import logging
@@ -19,6 +19,20 @@ except ImportError as e:
     LEGAL_COMPLIANCE_AVAILABLE = False
     logger.warning(f"Legal compliance modules not available: {e}")
 
+# UPDATED LEGAL COMPLIANCE IMPORTS - FIXED VERSIONS
+try:
+    from system_initializer_legal_fixes import (
+        create_legal_rag_engine_fixed,
+        create_legal_chatbot_enhanced,
+        update_system_initializer_with_fixed_legal,
+        get_legal_system_diagnostics
+    )
+    LEGAL_FIXES_AVAILABLE = True
+    logger.info("✅ FIXED Legal RAG components imported successfully")
+except ImportError as e:
+    LEGAL_FIXES_AVAILABLE = False
+    logger.warning(f"⚠️ FIXED Legal RAG components not available: {e}")
+
 class SystemInitializer:
     """Centralized system initialization with dependency management"""
     
@@ -30,6 +44,7 @@ class SystemInitializer:
             "report_conversation", 
             "pdf_exporter", 
             "market_report_system",
+            # Legal compliance components
             "legal_rag_engine",
             "legal_search_engine", 
             "legal_chatbot"
@@ -42,7 +57,7 @@ class SystemInitializer:
         self.component_factories[name] = factory
     
     def initialize_system(self, offline_mode: bool = False) -> bool:
-        """Initialize all system components"""
+        """Initialize all system components including FIXED legal RAG"""
         if self.initialized:
             logger.info("System already initialized")
             return True
@@ -50,19 +65,60 @@ class SystemInitializer:
         logger.info(f"Initializing system (offline_mode={offline_mode})")
         
         try:
+            # Register core components first
             self._register_core_components()
+            
+            # Register FIXED legal components if available
+            if LEGAL_FIXES_AVAILABLE:
+                logger.info("🔧 Integrating FIXED legal compliance components...")
+                try:
+                    update_system_initializer_with_fixed_legal(self)
+                    logger.info("✅ FIXED legal components registered successfully")
+                except Exception as e:
+                    logger.error(f"❌ Failed to register FIXED legal components: {e}")
             
             if offline_mode:
                 logger.info("Working in offline mode - limiting component initialization")
                 system_state.current_state = 'offline'
             
-            for component_name in self.required_components:
+            # Initialize core market intelligence components
+            core_components = ["rag_engine", "web_search", "report_generator", 
+                             "report_conversation", "pdf_exporter", "market_report_system"]
+            
+            for component_name in core_components:
                 self._initialize_component(component_name, offline_mode)
             
+            # Initialize legal compliance components
+            self._initialize_legal_components(offline_mode)
+            
+            # Update system state
             self._update_system_state()
             
             self.initialized = True
-            logger.info(f"System initialization complete. State: {system_state.current_state}")
+            logger.info(f"🎉 System initialization complete. State: {system_state.current_state}")
+            
+            # Log legal system status
+            if LEGAL_FIXES_AVAILABLE:
+                try:
+                    legal_diagnostics = get_legal_system_diagnostics(container)
+                    logger.info(f"Legal system status: {legal_diagnostics['overall_status']}")
+                    
+                    # Log detailed component status
+                    for comp_name, comp_status in legal_diagnostics['components'].items():
+                        if comp_status.get('available'):
+                            comp_type = comp_status.get('type', 'unknown')
+                            if comp_type == 'real' or comp_type == 'enhanced':
+                                logger.info(f"✅ {comp_name}: Fully operational")
+                            elif comp_type == 'limited':
+                                logger.warning(f"⚠️ {comp_name}: Limited functionality")
+                            else:
+                                logger.info(f"ℹ️ {comp_name}: {comp_type}")
+                        else:
+                            logger.warning(f"❌ {comp_name}: {comp_status.get('error', 'unavailable')}")
+                
+                except Exception as e:
+                    logger.warning(f"Could not get legal system diagnostics: {e}")
+            
             return True
         
         except Exception as e:
@@ -72,6 +128,65 @@ class SystemInitializer:
             system_state.current_state = 'offline'
             return False
     
+    def _initialize_legal_components(self, offline_mode: bool) -> None:
+        """Initialize legal compliance components with FIXED versions"""
+        logger.info("🏛️ Initializing Legal Compliance System...")
+        
+        if LEGAL_FIXES_AVAILABLE:
+            logger.info("Using FIXED legal RAG components")
+            
+            # Initialize legal components in order
+            legal_components = ['legal_rag_engine', 'legal_search_engine', 'legal_chatbot']
+            
+            for legal_component in legal_components:
+                try:
+                    success = self._initialize_component(legal_component, offline_mode)
+                    if success:
+                        logger.info(f"✅ {legal_component} initialized successfully")
+                    else:
+                        logger.warning(f"⚠️ {legal_component} initialization failed - using fallback")
+                except Exception as e:
+                    logger.error(f"❌ {legal_component} initialization error: {e}")
+            
+            # Test the legal system if possible
+            try:
+                legal_chatbot = container.get('legal_chatbot')
+                if legal_chatbot and hasattr(legal_chatbot, 'get_system_status'):
+                    system_status = legal_chatbot.get_system_status()
+                    logger.info(f"Legal system test: {system_status}")
+                    
+                    # Check if we have full RAG capability
+                    rag_test = system_status.get('rag_connection_test', {})
+                    if rag_test.get('status') == 'success':
+                        logger.info(f"🎉 FULL Legal RAG system active with {rag_test.get('total_documents', 0)} documents")
+                        system_state.set_component_status('legal_system', True, "Full RAG system with Weaviate")
+                    else:
+                        logger.info("⚠️ Limited legal system active (no Weaviate connection)")
+                        system_state.set_component_status('legal_system', True, "Limited legal system")
+                else:
+                    logger.info("ℹ️ Basic legal system active")
+                    system_state.set_component_status('legal_system', True, "Basic legal system")
+                    
+            except Exception as e:
+                logger.warning(f"Could not test legal system: {e}")
+                system_state.set_component_status('legal_system', False, f"Test failed: {str(e)}")
+        
+        elif LEGAL_COMPLIANCE_AVAILABLE:
+            logger.info("Using original legal compliance components")
+            
+            # Initialize original legal components
+            for legal_component in ['legal_rag_engine', 'legal_search_engine', 'legal_chatbot']:
+                try:
+                    self._initialize_component(legal_component, offline_mode)
+                except Exception as e:
+                    logger.error(f"Original legal component {legal_component} failed: {e}")
+            
+            system_state.set_component_status('legal_system', True, "Original legal components")
+        
+        else:
+            logger.warning("❌ No legal compliance components available")
+            system_state.set_component_status('legal_system', False, "No legal components available")
+    
     def _register_core_components(self) -> None:
         """Register core utility components in the container"""
         container.register('config_manager', config_manager)
@@ -79,8 +194,9 @@ class SystemInitializer:
     
     def _initialize_component(self, component_name: str, offline_mode: bool) -> bool:
         """Initialize a specific component"""
-        logger.info(f"Initializing component: {component_name}")
+        logger.debug(f"Initializing component: {component_name}")
         
+        # Skip certain components in offline mode
         if offline_mode and component_name in ['rag_engine', 'web_search', 'legal_rag_engine', 'legal_search_engine']:
             logger.info(f"Skipping {component_name} initialization in offline mode")
             system_state.set_component_status(component_name, False, "Component disabled in offline mode")
@@ -91,7 +207,7 @@ class SystemInitializer:
                 component = self.component_factories[component_name](container)
                 container.register(component_name, component)
                 system_state.set_component_status(component_name, True, f"Component initialized successfully")
-                logger.info(f"Component {component_name} initialized successfully")
+                logger.debug(f"Component {component_name} initialized successfully")
                 return True
             else:
                 logger.warning(f"No factory registered for component: {component_name}")
@@ -117,25 +233,67 @@ class SystemInitializer:
         critical_available = all(system_state.get_component_status(comp).get('available', False) 
                                for comp in critical_components)
         
-        legal_available = all(system_state.get_component_status(comp).get('available', False) 
+        legal_available = any(system_state.get_component_status(comp).get('available', False) 
                              for comp in legal_components)
         
-        if critical_available:
+        # Determine overall system state
+        if critical_available and available_components >= total_components * 0.8:
             system_state.current_state = 'online'
-        elif available_components > 0:
+        elif critical_available or available_components > 0:
             system_state.current_state = 'degraded'  
         else:
             system_state.current_state = 'offline'
         
+        # Log legal system status
         if legal_available:
-            logger.info("Legal compliance system: Available")
+            legal_status = system_state.get_component_status('legal_system')
+            if legal_status.get('available'):
+                logger.info(f"✅ Legal compliance system: {legal_status.get('description', 'Available')}")
+            else:
+                logger.info("⚠️ Legal compliance system: Limited availability")
         else:
-            logger.info("Legal compliance system: Limited or unavailable")
+            logger.warning("❌ Legal compliance system: Not available")
         
         logger.info(f"System state set to {system_state.current_state} "
                    f"({available_components}/{total_components} components available)")
+    
+    def get_system_overview(self) -> Dict[str, Any]:
+        """Get comprehensive system overview including legal components"""
+        overview = {
+            'system_state': system_state.current_state,
+            'initialized': self.initialized,
+            'total_components': len(self.required_components),
+            'available_components': 0,
+            'component_status': {},
+            'legal_system': {
+                'fixes_available': LEGAL_FIXES_AVAILABLE,
+                'original_available': LEGAL_COMPLIANCE_AVAILABLE,
+                'status': 'unknown'
+            }
+        }
+        
+        # Get component status
+        for component in self.required_components:
+            status = system_state.get_component_status(component)
+            overview['component_status'][component] = status
+            if status.get('available', False):
+                overview['available_components'] += 1
+        
+        # Get legal system status
+        if LEGAL_FIXES_AVAILABLE:
+            try:
+                legal_diagnostics = get_legal_system_diagnostics(container)
+                overview['legal_system'].update({
+                    'status': legal_diagnostics['overall_status'],
+                    'components': legal_diagnostics['components'],
+                    'recommendations': legal_diagnostics.get('recommendations', [])
+                })
+            except Exception as e:
+                overview['legal_system']['status'] = f'error: {str(e)}'
+        
+        return overview
 
-# FIXED COMPONENT FACTORIES - Using correct import paths
+# COMPONENT FACTORIES - Updated with original factories plus legal enhancements
 
 def create_rag_engine(container):
     """Factory for RAG Engine component"""
@@ -332,10 +490,10 @@ def create_market_report_system(container):
         
         return MockMarketReportSystem()
 
-# LEGAL COMPLIANCE FACTORIES (FIXED)
+# ORIGINAL LEGAL COMPLIANCE FACTORIES (kept as fallback)
 
 def create_legal_rag_engine(container):
-    """Factory for Legal RAG Engine component - FIXED"""
+    """Factory for Legal RAG Engine component (original version - fallback)"""
     try:
         if not LEGAL_COMPLIANCE_AVAILABLE:
             raise ImportError("Legal compliance modules not available")
@@ -366,11 +524,11 @@ def create_legal_rag_engine(container):
             embedding_engine=embedding_engine
         )
         
-        logger.info("Legal RAG Engine initialized successfully")
+        logger.info("Legal RAG Engine (original) initialized successfully")
         return legal_rag
         
     except Exception as e:
-        logger.error(f"Legal RAG Engine initialization failed: {e}")
+        logger.error(f"Legal RAG Engine (original) initialization failed: {e}")
         
         class MockLegalRAGEngine:
             def __init__(self):
@@ -400,7 +558,7 @@ def create_legal_rag_engine(container):
         return MockLegalRAGEngine()
 
 def create_legal_search_engine(container):
-    """Factory for Legal Search Engine component - FIXED"""
+    """Factory for Legal Search Engine component (original version - fallback)"""
     try:
         if not LEGAL_COMPLIANCE_AVAILABLE:
             raise ImportError("Legal compliance modules not available")
@@ -408,30 +566,17 @@ def create_legal_search_engine(container):
         web_search_engine = container.get('web_search')
         legal_search = LegalSearchEngine(web_search_engine=web_search_engine)
         
-        # FIX: Add the missing research_topic method
-        def research_topic(self, query, context="", market="", top_n=3):
-            """Add missing research_topic method"""
-            return self.search_legal_web_content(
-                query=query, 
-                jurisdiction=market or "Saudi Arabia", 
-                max_results=top_n
-            )
-        
-        # Bind the method to the instance
-        legal_search.research_topic = research_topic.__get__(legal_search, LegalSearchEngine)
-        
-        logger.info("Legal Search Engine initialized successfully")
+        logger.info("Legal Search Engine (original) initialized successfully")
         return legal_search
         
     except Exception as e:
-        logger.error(f"Legal Search Engine initialization failed: {e}")
+        logger.error(f"Legal Search Engine (original) initialization failed: {e}")
         
         class MockLegalSearchEngine:
             def __init__(self):
                 pass
             
             def research_topic(self, query, context="", market="", top_n=3):
-                """FIXED: Add the missing research_topic method"""
                 return {
                     'query': query,
                     'data': [],
@@ -471,7 +616,7 @@ def create_legal_search_engine(container):
         return MockLegalSearchEngine()
 
 def create_legal_chatbot(container):
-    """Factory for Legal Chatbot component"""
+    """Factory for Legal Chatbot component (original version - fallback)"""
     try:
         if not LEGAL_COMPLIANCE_AVAILABLE:
             raise ImportError("Legal compliance modules not available")
@@ -481,14 +626,14 @@ def create_legal_chatbot(container):
         
         legal_chatbot = LegalChatbot(
             legal_rag_engine=legal_rag_engine,
-            web_search_engine=legal_search_engine  # FIXED: Use correct parameter name
+            web_search_engine=legal_search_engine
         )
         
-        logger.info("Legal Chatbot initialized successfully")
+        logger.info("Legal Chatbot (original) initialized successfully")
         return legal_chatbot
         
     except Exception as e:
-        logger.error(f"Legal Chatbot initialization failed: {e}")
+        logger.error(f"Legal Chatbot (original) initialization failed: {e}")
         
         class MockLegalChatbot:
             def __init__(self):
@@ -547,7 +692,7 @@ system_initializer.register_component_factory('report_conversation', create_repo
 system_initializer.register_component_factory('pdf_exporter', create_pdf_exporter)
 system_initializer.register_component_factory('market_report_system', create_market_report_system)
 
-# Register legal compliance component factories
+# Register original legal compliance component factories (as fallback)
 system_initializer.register_component_factory('legal_rag_engine', create_legal_rag_engine)
 system_initializer.register_component_factory('legal_search_engine', create_legal_search_engine) 
 system_initializer.register_component_factory('legal_chatbot', create_legal_chatbot)
@@ -555,3 +700,7 @@ system_initializer.register_component_factory('legal_chatbot', create_legal_chat
 def initialize_system(offline_mode=False):
     """Convenience function to initialize the entire system"""
     return system_initializer.initialize_system(offline_mode)
+
+def get_system_overview():
+    """Get comprehensive system overview"""
+    return system_initializer.get_system_overview()
