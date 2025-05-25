@@ -1,0 +1,57 @@
+{
+  "title": "Saudi Arabia General Market Market Analysis",
+  "date": "2025-05-25",
+  "sectors": [
+    "General Market"
+  ],
+  "geography": "Saudi Arabia",
+  "sections": [
+    {
+      "title": "Executive Summary",
+      "content": "OpenAI client not available. Please check your API key and ensure the openai package is installed.",
+      "subsections": []
+    },
+    {
+      "title": "General Market Sector Analysis",
+      "content": "OpenAI client not available. Please check your API key and ensure the openai package is installed.",
+      "subsections": [
+        {
+          "title": "Market Size and Growth",
+          "content": "OpenAI client not available. Please check your API key and ensure the openai package is installed."
+        },
+        {
+          "title": "Key Players",
+          "content": "OpenAI client not available. Please check your API key and ensure the openai package is installed."
+        },
+        {
+          "title": "Challenges and Opportunities",
+          "content": "OpenAI client not available. Please check your API key and ensure the openai package is installed."
+        }
+      ],
+      "charts": [
+        {
+          "title": "General Market Market Trends in Saudi Arabia",
+          "path": "report_charts/general_market_saudi_arabia_market_size.png",
+          "description": "This chart shows market trends for the General Market sector in Saudi Arabia."
+        }
+      ]
+    },
+    {
+      "title": "Market Trends",
+      "content": "OpenAI client not available. Please check your API key and ensure the openai package is installed.",
+      "subsections": []
+    },
+    {
+      "title": "Future Outlook",
+      "content": "OpenAI client not available. Please check your API key and ensure the openai package is installed.",
+      "subsections": []
+    },
+    {
+      "title": "Conclusion",
+      "content": "OpenAI client not available. Please check your API key and ensure the openai package is installed.",
+      "subsections": []
+    }
+  ],
+  "charts": [],
+  "sources": []
+}

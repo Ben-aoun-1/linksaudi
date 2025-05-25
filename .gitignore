@@ -124,13 +124,11 @@ dmypy.json
 # PROJECT-SPECIFIC DATA DIRECTORIES
 # =====================================
 # Generated reports and data
-market_reports/
-report_charts/
-legal_conversations/
-legal_cache/
-data/
-temp_files/
-cache/
+
+
+
+
+
 
 # Log files
 logs/
