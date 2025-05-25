@@ -90,7 +90,7 @@ class LegalRAGEngine:
             # Use semantic search with near_text (Weaviate's built-in vectorization)
             query_builder = (
                 self.weaviate_client.query
-                .get(self.legal_class, properties_to_retrieve)
+                .get(self.legal_class, properties_to_retrieve) 
                 .with_near_text({"concepts": [query]})
                 .with_limit(limit)
             )
