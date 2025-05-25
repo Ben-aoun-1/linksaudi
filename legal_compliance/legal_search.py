@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# legal_compliance/legal_search.py - Legal Search Engine for web-based legal research
+# legal_compliance/legal_search.py - FIXED Legal Search Engine with research_topic method
 
 import os
 import json
@@ -38,6 +38,54 @@ class LegalSearchEngine:
         }
         
         logger.info("Legal Search Engine initialized")
+    
+    def research_topic(self, query: str, context: str = "", market: str = "", top_n: int = 3) -> Dict[str, Any]:
+        """
+        FIXED: Add the missing research_topic method that was causing the error
+        This method was expected by the legal chatbot but was missing from the original implementation
+        """
+        try:
+            logger.info(f"Legal research topic query: {query}")
+            
+            # Use the existing search_legal_web_content method
+            result = self.search_legal_web_content(
+                query=query,
+                jurisdiction=market or "Saudi Arabia",
+                max_results=top_n
+            )
+            
+            # Transform the result to match the expected format
+            if 'sources' in result and result['sources']:
+                # Convert sources to data format expected by other components
+                data = []
+                for source in result['sources']:
+                    data.append({
+                        'title': source.get('title', 'Legal Document'),
+                        'url': source.get('url', ''),
+                        'summary': source.get('summary', ''),
+                        'retrieved_date': source.get('retrieved_date', '')
+                    })
+                
+                return {
+                    'query': query,
+                    'data': data,
+                    'summary': result.get('summary', ''),
+                    'key_findings': result.get('key_findings', []),
+                    'total_sources': len(data)
+                }
+            else:
+                # Return the original result if no sources transformation needed
+                return result
+                
+        except Exception as e:
+            logger.error(f"Error in legal research_topic: {e}")
+            return {
+                'query': query,
+                'data': [],
+                'summary': f'Legal research error: {str(e)}',
+                'key_findings': [],
+                'error': str(e)
+            }
     
     def search_legal_web_content(self, query: str, legal_category: str = None, 
                                 jurisdiction: str = "Saudi Arabia", max_results: int = 5) -> Dict[str, Any]:

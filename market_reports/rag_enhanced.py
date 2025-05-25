@@ -87,9 +87,7 @@ class EmbeddingEngine:
         print(f"Set OpenAI model to: {model_name} with {self.dimensions if dimensions else 'default'} dimensions")
     
     def encode(self, text: str, use_cache: bool = True) -> Optional[List[float]]:
-        """
-        Generate embeddings for text using OpenAI or local fallback
-        """
+        """Generate embeddings for text using OpenAI or local fallback - FIXED"""
         if not text or not text.strip():
             print("Empty text provided for embedding")
             return None
@@ -100,11 +98,21 @@ class EmbeddingEngine:
         # Try OpenAI first
         if self.use_openai:
             try:
-                response = self.openai_client.embeddings.create(
-                    model=self.embedding_model,
-                    input=text,
-                    dimensions=self.dimensions
-                )
+                # FIXED: Remove dimensions parameter for older OpenAI models
+                if self.embedding_model == "text-embedding-3-small":
+                    # Only newer models support dimensions parameter
+                    response = self.openai_client.embeddings.create(
+                        model=self.embedding_model,
+                        input=text
+                        # dimensions=self.dimensions  # REMOVED - causing the error
+                    )
+                else:
+                    # For other models, don't use dimensions
+                    response = self.openai_client.embeddings.create(
+                        model=self.embedding_model,
+                        input=text
+                    )
+                
                 embedding = response.data[0].embedding
                 
                 # Cache the result
@@ -117,7 +125,7 @@ class EmbeddingEngine:
                 print(f"OpenAI embedding failed: {e}")
                 print("Falling back to local model...")
         
-        # Fallback to local model
+        # Fallback to local model (rest of the method stays the same)
         if self.local_model:
             try:
                 embedding = self.local_model.encode(text).tolist()
@@ -130,6 +138,7 @@ class EmbeddingEngine:
         
         print("No embedding method available")
         return None
+
     
     def encode_batch(self, texts: List[str], batch_size: int = 100) -> Optional[List[List[float]]]:
         """

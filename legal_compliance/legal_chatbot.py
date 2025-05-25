@@ -184,12 +184,17 @@ class LegalChatbot:
             
             # Update session metadata
             self.current_session["metadata"]["queries_count"] += 1
-            self.current_session["metadata"]["document_types_consulted"].update(
-                assistant_response["metadata"]["document_types"]
-            )
-            self.current_session["metadata"]["jurisdictions_consulted"].update(
-                assistant_response["metadata"]["jurisdictions"]
-            )
+        
+            # FIXED: Check if the values are lists before using update()
+            if isinstance(assistant_response.get("metadata", {}).get("document_types"), list):
+                self.current_session["metadata"]["document_types_consulted"].update(
+                    set(assistant_response["metadata"]["document_types"])  # Convert to set first
+                )
+            
+            if isinstance(assistant_response.get("metadata", {}).get("jurisdictions"), list):
+                self.current_session["metadata"]["jurisdictions_consulted"].update(
+                    set(assistant_response["metadata"]["jurisdictions"])  # Convert to set first
+                )
             
             # Keep session history manageable
             if len(self.current_session["messages"]) > self.max_history_length:

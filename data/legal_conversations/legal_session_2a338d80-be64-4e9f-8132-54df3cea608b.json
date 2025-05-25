@@ -1,0 +1,68 @@
+{
+  "session_id": "2a338d80-be64-4e9f-8132-54df3cea608b",
+  "user_id": "anonymous",
+  "start_time": "2025-05-25T16:48:38.029347",
+  "messages": [
+    {
+      "role": "assistant",
+      "content": "Welcome to the Legal Compliance Assistant! \n\nI'm here to help you with legal questions related to Saudi Arabian law and regulations. I can assist with:\n\n• Corporate law and business regulations\n• Contract law and commercial agreements  \n• Employment law and labor regulations\n• Regulatory compliance requirements\n• Commercial licensing and permits\n• International trade regulations\n\nPlease note that I provide general legal information based on available legal documents and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney.\n\nHow can I assist you with your legal question today?",
+      "timestamp": "2025-05-25T16:48:38.029347",
+      "message_type": "welcome"
+    },
+    {
+      "role": "user",
+      "content": "what are the lmegal procedures required to open a business in KSA",
+      "timestamp": "2025-05-25T16:48:38.031351",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on Saudi Arabian legal framework, regarding your question about \"what are the lmegal procedures required to open a business in KSA\":\n\n**Legal Analysis:**\nThe relevant legal provisions indicate that this matter is governed by established Saudi Arabian law. Key considerations include:\n\n• Compliance with applicable royal decrees and regulations\n• Adherence to commercial and civil law requirements  \n• Consideration of jurisdictional and procedural requirements\n\n**Regulatory Framework:**\nThe applicable legal framework provides clear guidance on procedures and requirements that must be followed.\n\n**Recommendations:**\n1. Ensure full compliance with applicable regulations\n2. Consult with qualified legal counsel for specific implementation\n3. Review current legal requirements and any recent updates\n\n**Legal Disclaimer:** This information is provided for general guidance only and does not constitute legal advice. For specific legal matters, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n\n**Legal Disclaimer:** This information is provided for general guidance only and does not constitute legal advice. Laws and regulations may change, and specific circumstances may affect how laws apply to your situation. For specific legal matters, please consult with a qualified attorney licensed to practice in the relevant jurisdiction.",
+      "timestamp": "2025-05-25T16:48:46.546702",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 2,
+        "citations_provided": 2,
+        "web_sources_used": 0,
+        "document_types": [
+          "Royal Decree"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ]
+      },
+      "citations": [
+        {
+          "title": "Commercial Court Law - Royal Decree No. M/93",
+          "document_type": "Royal Decree",
+          "law_number": "M/93",
+          "jurisdiction": "Saudi Arabia",
+          "source": "Official Gazette",
+          "date_published": "2019-11-19"
+        },
+        {
+          "title": "Companies Law - Royal Decree No. M/132",
+          "document_type": "Royal Decree",
+          "law_number": "M/132",
+          "jurisdiction": "Saudi Arabia",
+          "source": "Official Gazette",
+          "date_published": "2015-01-28"
+        }
+      ],
+      "web_sources": []
+    }
+  ],
+  "metadata": {
+    "queries_count": 1,
+    "document_types_consulted": [
+      "Royal Decree"
+    ],
+    "jurisdictions_consulted": [
+      "Saudi Arabia"
+    ]
+  }
+}
