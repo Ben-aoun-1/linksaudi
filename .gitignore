@@ -1,0 +1,337 @@
+# LinkSaudi Market Intelligence Platform .gitignore
+
+# =====================================
+# SENSITIVE CONFIGURATION FILES
+# =====================================
+config.json
+.env
+.env.local
+.env.production
+.env.staging
+*.key
+*.pem
+secrets/
+credentials/
+
+# API Keys and sensitive data
+*api_key*
+*secret*
+*token*
+weaviate_config.json
+openai_config.json
+
+# =====================================
+# PYTHON
+# =====================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+conda-meta/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# =====================================
+# PROJECT-SPECIFIC DATA DIRECTORIES
+# =====================================
+# Generated reports and data
+market_reports/
+report_charts/
+legal_conversations/
+legal_cache/
+data/
+temp_files/
+cache/
+
+# Log files
+logs/
+*.log
+log_*
+market_intelligence.log
+
+# Temporary and cache files
+*.tmp
+*.temp
+.cache/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+
+# Generated PDFs and exports
+*.pdf
+exports/
+downloads/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# =====================================
+# STREAMLIT
+# =====================================
+.streamlit/
+streamlit_app.log
+
+# =====================================
+# JUPYTER/IPYTHON
+# =====================================
+.ipynb_checkpoints/
+*.ipynb
+
+# =====================================
+# EDITORS AND IDES
+# =====================================
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# =====================================
+# OPERATING SYSTEM
+# =====================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# =====================================
+# MISCELLANEOUS
+# =====================================
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*.save
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Large media files (if any)
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+
+# Node.js (if you have any JS components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =====================================
+# PROJECT-SPECIFIC EXCLUSIONS
+# =====================================
+# Don't track generated charts
+*.png
+*.jpg
+*.jpeg
+*.gif
+!static/*.png
+!static/*.jpg
+!assets/*.png
+!assets/*.jpg
+
+# Don't track processed documents
+processed_legal/
+legal_documents/
+uploaded_files/
+
+# Don't track user session data
+sessions/
+user_data/
+
+# Model files (if you cache any ML models)
+models/
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.hdf5
+
+# Vector databases
+vector_db/
+embeddings/
+index/
+
+# Performance monitoring
+performance_logs/
+metrics/
+
+# =====================================
+# KEEP THESE FILES (FORCE INCLUDE)
+# =====================================
+# Keep important configuration templates
+!config.template.json
+!.env.example
+!requirements.txt
+!setup.py
+!README.md
+!LICENSE
+
+# Keep static assets
+!static/
+!assets/
+
+# Keep documentation
+!docs/
+!*.md
