@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# legal_compliance/__init__.py - Complete Legal Compliance Module
+# legal_compliance/__init__.py - FIXED Legal Compliance Module
 
 import os
 import json
@@ -8,7 +8,7 @@ import uuid
 import logging
 from typing import Dict, List, Any, Optional
 from datetime import datetime
-from .legal_rag_engine import LegalRAGEngine as FixedLegalRAGEngine
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("legal_compliance")
@@ -214,6 +214,54 @@ class LegalSearchEngine:
         self.web_search_engine = web_search_engine
         logger.info("Legal Search Engine initialized")
     
+    def research_topic(self, query: str, context: str = "", market: str = "", top_n: int = 3) -> Dict[str, Any]:
+        """
+        FIXED: Add the missing research_topic method that was causing the error
+        This method was expected by the legal chatbot but was missing from the original implementation
+        """
+        try:
+            logger.info(f"Legal research topic query: {query}")
+            
+            # Use the existing search_legal_web_content method
+            result = self.search_legal_web_content(
+                query=query,
+                jurisdiction=market or "Saudi Arabia",
+                max_results=top_n
+            )
+            
+            # Transform the result to match the expected format
+            if 'sources' in result and result['sources']:
+                # Convert sources to data format expected by other components
+                data = []
+                for source in result['sources']:
+                    data.append({
+                        'title': source.get('title', 'Legal Document'),
+                        'url': source.get('url', ''),
+                        'summary': source.get('summary', ''),
+                        'retrieved_date': source.get('retrieved_date', '')
+                    })
+                
+                return {
+                    'query': query,
+                    'data': data,
+                    'summary': result.get('summary', ''),
+                    'key_findings': result.get('key_findings', []),
+                    'total_sources': len(data)
+                }
+            else:
+                # Return the original result if no sources transformation needed
+                return result
+                
+        except Exception as e:
+            logger.error(f"Error in legal research_topic: {e}")
+            return {
+                'query': query,
+                'data': [],
+                'summary': f'Legal research error: {str(e)}',
+                'key_findings': [],
+                'error': str(e)
+            }
+    
     def search_legal_web_content(self, query: str, legal_category: str = None, 
                                 jurisdiction: str = "Saudi Arabia", max_results: int = 5) -> Dict[str, Any]:
         """Search for legal content on the web"""
@@ -297,7 +345,7 @@ class LegalSearchEngine:
         }
 
 class LegalChatbot:
-    """Legal compliance chatbot with conversation management"""
+    """Legal compliance chatbot with conversation management - FIXED VERSION"""
     
     def __init__(self, legal_rag_engine=None, web_search_engine=None):
         self.legal_rag_engine = legal_rag_engine
@@ -314,7 +362,7 @@ class LegalChatbot:
         self.enable_web_enhancement = True
         self.disclaimer_shown = False
         
-        logger.info("Legal Chatbot initialized")
+        logger.info("FIXED Legal Chatbot initialized")
     
     def start_new_session(self, user_id: str = None) -> str:
         """Start a new legal consultation session"""
@@ -345,7 +393,7 @@ class LegalChatbot:
     
     def ask_legal_question(self, question: str, document_type: str = None, 
                           jurisdiction: str = None, include_web_search: bool = None) -> Dict[str, Any]:
-        """Ask a legal question and get a response"""
+        """Ask a legal question and get a response - FIXED VERSION"""
         try:
             if not self.current_session:
                 self.start_new_session()
@@ -366,6 +414,10 @@ class LegalChatbot:
             self.current_session["messages"].append(user_message)
             
             # Generate response using legal RAG
+            base_response = ""
+            citations = []
+            documents_used = []
+            
             if self.legal_rag_engine:
                 try:
                     rag_response = self.legal_rag_engine.generate_legal_response(
@@ -418,6 +470,21 @@ class LegalChatbot:
                 base_response += "\n\n" + self._get_legal_disclaimer()
                 self.disclaimer_shown = True
             
+            # FIXED: Safely extract document metadata
+            document_types = []
+            jurisdictions = []
+            
+            if isinstance(documents_used, list):
+                for doc in documents_used:
+                    if isinstance(doc, dict):
+                        doc_type = doc.get("document_type", "")
+                        if doc_type and doc_type not in document_types:
+                            document_types.append(doc_type)
+                        
+                        jurisdiction_val = doc.get("jurisdiction", "")
+                        if jurisdiction_val and jurisdiction_val not in jurisdictions:
+                            jurisdictions.append(jurisdiction_val)
+            
             # Create assistant response
             assistant_response = {
                 "role": "assistant",
@@ -428,8 +495,8 @@ class LegalChatbot:
                     "documents_consulted": len(documents_used),
                     "citations_provided": len(citations),
                     "web_sources_used": len(web_sources),
-                    "document_types": list(set([doc.get("document_type", "") for doc in documents_used])),
-                    "jurisdictions": list(set([doc.get("jurisdiction", "") for doc in documents_used]))
+                    "document_types": document_types,
+                    "jurisdictions": jurisdictions
                 },
                 "citations": citations,
                 "web_sources": web_sources
@@ -438,14 +505,19 @@ class LegalChatbot:
             # Add to session
             self.current_session["messages"].append(assistant_response)
             
-            # Update session metadata
+            # FIXED: Update session metadata safely
             self.current_session["metadata"]["queries_count"] += 1
-            self.current_session["metadata"]["document_types_consulted"].update(
-                assistant_response["metadata"]["document_types"]
-            )
-            self.current_session["metadata"]["jurisdictions_consulted"].update(
-                assistant_response["metadata"]["jurisdictions"]
-            )
+            
+            # FIXED: Ensure session metadata fields are sets before updating
+            if not isinstance(self.current_session["metadata"]["document_types_consulted"], set):
+                self.current_session["metadata"]["document_types_consulted"] = set()
+            
+            if not isinstance(self.current_session["metadata"]["jurisdictions_consulted"], set):
+                self.current_session["metadata"]["jurisdictions_consulted"] = set()
+            
+            # Update with new values
+            self.current_session["metadata"]["document_types_consulted"].update(document_types)
+            self.current_session["metadata"]["jurisdictions_consulted"].update(jurisdictions)
             
             # Keep session history manageable
             if len(self.current_session["messages"]) > self.max_history_length:
@@ -469,6 +541,8 @@ class LegalChatbot:
             
         except Exception as e:
             logger.error(f"Error processing legal question: {e}")
+            import traceback
+            logger.debug(traceback.format_exc())
             
             error_response = {
                 "response": f"I encountered an error while processing your legal question: {str(e)}. Please try again or contact support.",
@@ -657,20 +731,30 @@ class LegalChatbot:
             return {"error": f"Failed to export report: {str(e)}"}
     
     def load_session(self, session_id: str) -> bool:
-        """Load a previous session"""
+        """Load a previous session - FIXED VERSION"""
         try:
             filename = os.path.join(self.conversations_dir, f"legal_session_{session_id}.json")
             session_data = load_json_with_encoding(filename)
             
             if session_data:
-                # Convert lists back to sets
-                session_data["metadata"]["document_types_consulted"] = set(
-                    session_data["metadata"]["document_types_consulted"]
-                )
-                session_data["metadata"]["jurisdictions_consulted"] = set(
-                    session_data["metadata"]["jurisdictions_consulted"]
-                )
+                # FIXED: Safely convert lists back to sets when loading
+                metadata = session_data.get("metadata", {})
                 
+                # Convert document_types_consulted to set
+                doc_types = metadata.get("document_types_consulted", [])
+                if isinstance(doc_types, list):
+                    metadata["document_types_consulted"] = set(doc_types)
+                elif not isinstance(doc_types, set):
+                    metadata["document_types_consulted"] = set()
+                
+                # Convert jurisdictions_consulted to set
+                jurisdictions = metadata.get("jurisdictions_consulted", [])
+                if isinstance(jurisdictions, list):
+                    metadata["jurisdictions_consulted"] = set(jurisdictions)
+                elif not isinstance(jurisdictions, set):
+                    metadata["jurisdictions_consulted"] = set()
+                
+                session_data["metadata"] = metadata
                 self.current_session = session_data
                 logger.info(f"Loaded legal session: {session_id}")
                 return True
@@ -682,19 +766,27 @@ class LegalChatbot:
             return False
     
     def _save_current_session(self) -> bool:
-        """Save the current session to disk"""
+        """Save the current session to disk - FIXED VERSION"""
         if not self.current_session:
             return False
         
         try:
             # Convert sets to lists for JSON serialization
             session_copy = self.current_session.copy()
-            session_copy["metadata"]["document_types_consulted"] = list(
-                session_copy["metadata"]["document_types_consulted"]
-            )
-            session_copy["metadata"]["jurisdictions_consulted"] = list(
-                session_copy["metadata"]["jurisdictions_consulted"]
-            )
+            session_copy["metadata"] = self.current_session["metadata"].copy()
+            
+            # FIXED: Safely handle set to list conversion
+            doc_types = session_copy["metadata"]["document_types_consulted"]
+            if isinstance(doc_types, set):
+                session_copy["metadata"]["document_types_consulted"] = list(doc_types)
+            elif not isinstance(doc_types, list):
+                session_copy["metadata"]["document_types_consulted"] = []
+            
+            jurisdictions = session_copy["metadata"]["jurisdictions_consulted"]
+            if isinstance(jurisdictions, set):
+                session_copy["metadata"]["jurisdictions_consulted"] = list(jurisdictions)
+            elif not isinstance(jurisdictions, list):
+                session_copy["metadata"]["jurisdictions_consulted"] = []
             
             filename = os.path.join(
                 self.conversations_dir, 

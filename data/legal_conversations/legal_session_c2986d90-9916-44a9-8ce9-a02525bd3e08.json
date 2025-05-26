@@ -1,0 +1,62 @@
+{
+  "session_id": "c2986d90-9916-44a9-8ce9-a02525bd3e08",
+  "user_id": "anonymous",
+  "start_time": "2025-05-26T18:39:02.608336",
+  "messages": [
+    {
+      "role": "assistant",
+      "content": "Welcome to the Legal Compliance Assistant! \n\nI'm here to help you with legal questions related to Saudi Arabian law and regulations. I can assist with:\n\n• Corporate law and business regulations\n• Contract law and commercial agreements  \n• Employment law and labor regulations\n• Regulatory compliance requirements\n• Commercial licensing and permits\n• International trade regulations\n\nPlease note that I provide general legal information based on available legal documents and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney.\n\nHow can I assist you with your legal question today?",
+      "timestamp": "2025-05-26T18:39:02.608336",
+      "message_type": "welcome"
+    },
+    {
+      "role": "user",
+      "content": "how to hire employees in ksa",
+      "timestamp": "2025-05-26T18:39:02.608336",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "**Legal Framework:**\nThe hiring of employees in the Kingdom of Saudi Arabia (KSA) is governed by the Labor Law (Royal Decree No. M/51, 23 Sha'ban 1426/27 September 2005) and related ministerial decisions.\n\n**Key Requirements:**\n1. Employment Contract: As per Article 37 of the Labor Law, an employment contract must be in writing, in Arabic, and in triplicate. The contract must specify the name of the employer and employee, job description, salary, and duration (if fixed-term).\n2. Work Permit: Non-Saudi employees require a work permit from the Ministry of Human Resources and Social Development (MHRSD), as per Article 11 of the Labor Law.\n3. Medical Fitness: The employer must ensure that the employee is medically fit and free from infectious diseases, as per Article 38 of the Labor Law.\n\n**Compliance Procedures:**\n1. Prepare an employment contract in accordance with Article 37 of the Labor Law.\n2. Apply for a work permit for non-Saudi employees through the MHRSD.\n3. Arrange for a medical examination of the employee.\n\n**Penalties/Consequences:**\nNon-compliance with the Labor Law can result in penalties, including fines, imprisonment, and business closure, as per Article 257 of the Labor Law.\n\n**Practical Recommendations:**\n1. Ensure the employment contract is clear and complies with the Labor Law.\n2. Keep track of work permit expiration dates to avoid penalties.\n3. Regularly review and update your hiring procedures to ensure compliance with changes in the law.\n\n**Legal Disclaimer:**\nThis analysis is based on the provided legal documents and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n\n**Legal Disclaimer:** This information is provided for general guidance only and does not constitute legal advice. Laws and regulations may change, and specific circumstances may affect how laws apply to your situation. For specific legal matters, please consult with a qualified attorney licensed to practice in the relevant jurisdiction.",
+      "timestamp": "2025-05-26T18:39:24.678742",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 1,
+        "citations_provided": 1,
+        "web_sources_used": 0,
+        "document_types": [
+          "Legal Guidance"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ]
+      },
+      "citations": [
+        {
+          "title": "Legal Guide: Employment Law in Saudi Arabia",
+          "document_type": "Legal Guidance",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Employment Law",
+          "file_name": "employment_law_guide.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-26T18:39:02.816121",
+          "source": "Legal Database"
+        }
+      ],
+      "web_sources": []
+    }
+  ],
+  "metadata": {
+    "queries_count": 1,
+    "document_types_consulted": [
+      "Legal Guidance"
+    ],
+    "jurisdictions_consulted": [
+      "Saudi Arabia"
+    ]
+  }
+}
