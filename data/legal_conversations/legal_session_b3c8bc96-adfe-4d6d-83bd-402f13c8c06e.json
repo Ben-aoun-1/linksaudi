@@ -1,0 +1,62 @@
+{
+  "session_id": "b3c8bc96-adfe-4d6d-83bd-402f13c8c06e",
+  "user_id": "anonymous",
+  "start_time": "2025-05-26T18:14:56.519619",
+  "messages": [
+    {
+      "role": "assistant",
+      "content": "Welcome to the Legal Compliance Assistant! \n\nI'm here to help you with legal questions related to Saudi Arabian law and regulations. I can assist with:\n\n• Corporate law and business regulations\n• Contract law and commercial agreements  \n• Employment law and labor regulations\n• Regulatory compliance requirements\n• Commercial licensing and permits\n• International trade regulations\n\nPlease note that I provide general legal information based on available legal documents and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney.\n\nHow can I assist you with your legal question today?",
+      "timestamp": "2025-05-26T18:14:56.519619",
+      "message_type": "welcome"
+    },
+    {
+      "role": "user",
+      "content": "what should i know about hiring employees in KSA",
+      "timestamp": "2025-05-26T18:14:56.531097",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "**Legal Framework:**\nThe legal framework governing the hiring of employees in the Kingdom of Saudi Arabia (KSA) is primarily established by the Saudi Labor Law, Royal Decree No. M/51, 23 Sha'ban 1426 / 27 September 2005, as amended (the \"Labor Law\"). \n\n**Key Requirements:**\n1. Employment Contract: As per Article 37 of the Labor Law, an employment contract must be in writing, specifying the nature of work, wage, and duration (if fixed). \n2. Wage Protection System: Employers are required to comply with the Wage Protection System (WPS) as per Ministerial Resolution No. 4040, 1/11/1436H, which mandates timely payment of wages through an approved Saudi Financial Institution.\n3. Saudization: Under the Nitaqat program, employers are required to maintain a certain percentage of Saudi nationals in their workforce, as per Ministerial Resolution No. 4040, 1/11/1436H.\n\n**Compliance Procedures:**\n1. Register the employment contract with the Ministry of Labor and Social Development (MLSD).\n2. Enroll in the WPS and ensure timely payment of wages.\n3. Regularly review Saudization requirements and adjust hiring practices accordingly.\n\n**Penalties/Consequences:**\nNon-compliance with the Labor Law and associated regulations can result in penalties ranging from fines to business closure, as per Articles 13 and 14 of the Labor Law.\n\n**Practical Recommendations:**\n1. Ensure all employment contracts are in writing and registered with the MLSD.\n2. Regularly review and update your Saudization strategy to ensure compliance with the Nitaqat program.\n3. Implement a robust system for wage payment to comply with the WPS.\n\n**Legal Disclaimer:**\nThis analysis is based on the provided legal documents and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n\n**Legal Disclaimer:** This information is provided for general guidance only and does not constitute legal advice. Laws and regulations may change, and specific circumstances may affect how laws apply to your situation. For specific legal matters, please consult with a qualified attorney licensed to practice in the relevant jurisdiction.",
+      "timestamp": "2025-05-26T18:15:26.619602",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 1,
+        "citations_provided": 1,
+        "web_sources_used": 0,
+        "document_types": [
+          "Legal Guidance"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ]
+      },
+      "citations": [
+        {
+          "title": "Legal Guide: what should i know about hiring employees in KSA",
+          "document_type": "Legal Guidance",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "General Practice",
+          "file_name": "legal_guide.pdf",
+          "page_number": 1,
+          "processing_date": "2025-05-26T18:14:56.741937",
+          "source": "Legal Database"
+        }
+      ],
+      "web_sources": []
+    }
+  ],
+  "metadata": {
+    "queries_count": 1,
+    "document_types_consulted": [
+      "Legal Guidance"
+    ],
+    "jurisdictions_consulted": [
+      "Saudi Arabia"
+    ]
+  }
+}
