@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-# app.py - LinkSaudi Market Intelligence Platform with FIXED Legal RAG Integration
-# Comprehensive Streamlit application with organized structure
-
-# =============================================================================
-# PAGE CONFIGURATION (Must be first)
-# =============================================================================
-
 import streamlit as st
 
 st.set_page_config(
@@ -15,23 +8,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# =============================================================================
-# IMPORTS AND DEPENDENCIES
-# =============================================================================
-
-# Standard library imports
 import os
 import json
 import time
 import re
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
-
-# Third-party imports
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# Core system imports
 try:
     from dependency_container import container
     from system_initializer import initialize_system, get_system_overview
@@ -41,7 +26,6 @@ except ImportError as e:
     CORE_IMPORTS_AVAILABLE = False
     print(f"Core imports failed: {e}")
 
-# Market intelligence imports
 try:
     from market_reports.utils import (
         logger, config_manager, system_state, 
@@ -53,23 +37,21 @@ except ImportError as e:
     MARKET_UTILS_AVAILABLE = False
     print(f"Market intelligence utils not available: {e}")
 
-# Legal compliance imports - Original
 try:
-    from legal_compliance import LegalRAGEngine, LegalChatbot, LegalSearchEngine
+    from legal_compliance import LegalRAGEngine, LegalChatbot
     LEGAL_COMPLIANCE_AVAILABLE = True
     print("Legal compliance components imported successfully")
 except ImportError as e:
     LEGAL_COMPLIANCE_AVAILABLE = False
     print(f"Legal compliance components not available: {e}")
 
-# Legal compliance imports - FIXED versions
 try:
     from legal_compliance.legal_rag_engine import LegalRAGEngine as FixedLegalRAGEngine
     from system_initializer_legal_fixes import (
         create_legal_rag_engine_fixed,
-        create_legal_chatbot_enhanced,
-        get_legal_system_diagnostics,
-        update_system_initializer_with_fixed_legal
+        create_legal_chatbot_enhanced_no_web,
+        get_legal_system_diagnostics_no_web,
+        update_system_initializer_no_web
     )
     FIXED_LEGAL_AVAILABLE = True
     print("✅ FIXED Legal RAG components imported successfully")
@@ -77,13 +59,8 @@ except ImportError as e:
     FIXED_LEGAL_AVAILABLE = False
     print(f"⚠️ FIXED Legal RAG components not available: {e}")
 
-# =============================================================================
-# CUSTOM CSS STYLING
-# =============================================================================
-
 st.markdown("""
 <style>
-    /* Dark theme colors */
     :root {
         --primary-green: #609156;
         --secondary-green: #7FB878;
@@ -99,13 +76,11 @@ st.markdown("""
         --info-blue: #64B5F6;
     }
     
-    /* Global styles */
     .stApp {
         background-color: var(--dark-bg) !important;
         color: var(--dark-text) !important;
     }
     
-    /* Headers */
     .main-header {
         color: var(--primary-green);
         text-align: center;
@@ -124,7 +99,6 @@ st.markdown("""
         padding-bottom: 0.5rem;
     }
     
-    /* Cards and containers */
     .section-card {
         background: linear-gradient(135deg, var(--dark-card-bg) 0%, #2D2D2D 100%);
         padding: 1.5rem;
@@ -134,7 +108,6 @@ st.markdown("""
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
     
-    /* Chat interface */
     .chat-message {
         padding: 1rem;
         margin: 0.5rem 0;
@@ -152,7 +125,6 @@ st.markdown("""
         border-left-color: var(--dark-accent);
     }
     
-    /* Status indicators */
     .status-indicator {
         padding: 0.5rem 1rem;
         border-radius: 20px;
@@ -176,7 +148,6 @@ st.markdown("""
         color: #B71C1C;
     }
     
-    /* Loading animations */
     .loading-container {
         text-align: center;
         padding: 2rem;
@@ -202,7 +173,6 @@ st.markdown("""
         font-style: italic;
     }
     
-    /* Error handling */
     .error-container {
         background: linear-gradient(135deg, #4A2C2A 0%, #3D1E1C 100%);
         border: 1px solid var(--error-red);
@@ -233,7 +203,6 @@ st.markdown("""
         padding-left: 1.5rem;
     }
     
-    /* Report styling */
     .report-header {
         background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
         color: white;
@@ -259,7 +228,6 @@ st.markdown("""
         font-weight: 600;
     }
     
-    /* Legal compliance specific styles */
     .legal-disclaimer {
         background: linear-gradient(135deg, #4A3C2A 0%, #3D2E1C 100%);
         border: 2px solid var(--warning-amber);
@@ -294,7 +262,6 @@ st.markdown("""
         color: var(--warning-amber);
     }
     
-    /* Legal system status indicators */
     .system-status-full-rag {
         background: linear-gradient(135deg, #2E7D32 0%, #388E3C 100%);
         color: white;
@@ -324,20 +291,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# =============================================================================
-# SESSION STATE INITIALIZATION
-# =============================================================================
-
 def initialize_session_state():
-    """Initialize all session state variables"""
     if 'initialized' not in st.session_state:
-        # Core system state
         st.session_state['initialized'] = False
         st.session_state['offline_mode'] = False
         st.session_state['system_status'] = 'unknown'
         st.session_state['connection_status'] = 'unknown'
         
-        # Market intelligence state
         st.session_state['history'] = []
         st.session_state['reports'] = []
         st.session_state['current_report'] = None
@@ -346,44 +306,29 @@ def initialize_session_state():
         st.session_state['prompt_count'] = 0
         st.session_state['report_ready'] = False
         
-        # Legal compliance state - Enhanced
         st.session_state['legal_system_available'] = False
-        st.session_state['legal_system_type'] = 'unknown'  # full_rag, limited, basic, unavailable
+        st.session_state['legal_system_type'] = 'unknown'
         st.session_state['legal_chat_messages'] = []
         st.session_state['current_legal_session'] = None
         st.session_state['legal_query_count'] = 0
         st.session_state['legal_document_count'] = 0
         
-        # Legal UI state
         st.session_state['show_legal_history'] = False
         st.session_state['show_legal_diagnostics'] = False
-        st.session_state['show_precedent_search'] = False
-        st.session_state['show_compliance_tool'] = False
         st.session_state['show_session_report'] = False
         st.session_state['current_session_report'] = None
 
-# Initialize session state
 initialize_session_state()
 
-# =============================================================================
-# SYSTEM INITIALIZATION FUNCTIONS
-# =============================================================================
-
 def initialize_application():
-    """Initialize the application with proper error handling"""
     try:
-        # Create necessary directories
         _create_directories()
-        
-        # Create default config if needed
         _create_default_config()
         
-        # Check if we're already initialized
         if st.session_state['initialized']:
             logger.info("Application already initialized")
             return True
         
-        # Try to initialize using new architecture
         if CORE_IMPORTS_AVAILABLE:
             return _initialize_with_new_architecture()
         else:
@@ -394,7 +339,6 @@ def initialize_application():
         return _handle_initialization_failure()
 
 def _create_directories():
-    """Create necessary application directories"""
     directories = [
         "report_charts", "market_reports", "legal_conversations", 
         "legal_cache", "logs"
@@ -403,7 +347,6 @@ def _create_directories():
         os.makedirs(directory, exist_ok=True)
 
 def _create_default_config():
-    """Create default configuration file if it doesn't exist"""
     config_dir = os.path.dirname(os.path.abspath(__file__))
     os.makedirs(config_dir, exist_ok=True)
     
@@ -432,7 +375,7 @@ def _create_default_config():
             "legal": {
                 "weaviate_class": "LegalDocument",
                 "max_context_documents": 10,
-                "enable_web_enhancement": True,
+                "enable_web_enhancement": False,
                 "cache_duration_hours": 24
             }
         }
@@ -441,7 +384,6 @@ def _create_default_config():
             logger.info(f"Created default config file at {config_file}")
 
 def _initialize_with_new_architecture():
-    """Initialize using the new refactored architecture"""
     try:
         from market_reports.utils import logger, config_manager, system_state
         from dependency_container import container
@@ -449,7 +391,6 @@ def _initialize_with_new_architecture():
         
         logger.info("Using refactored architecture")
         
-        # Initialize using new system
         success = initialize_system(offline_mode=st.session_state['offline_mode'])
         
         if success:
@@ -458,12 +399,10 @@ def _initialize_with_new_architecture():
             st.session_state['system_status'] = system_state.current_state
             st.session_state['connection_status'] = system_state.current_state
             
-            # Load existing reports
             if container.has('market_report_system'):
                 market_report_system = container.get('market_report_system')
                 st.session_state['reports'] = market_report_system.list_reports()
             
-            # Initialize legal compliance with FIXED components
             initialize_legal_compliance()
             
             return True
@@ -474,7 +413,6 @@ def _initialize_with_new_architecture():
         return False
 
 def _initialize_with_fallback():
-    """Initialize using fallback approach"""
     try:
         if st.session_state['offline_mode']:
             logger.info("Working in offline mode. Some features may be limited.")
@@ -488,11 +426,9 @@ def _initialize_with_fallback():
         return False
 
 def _handle_initialization_failure():
-    """Handle initialization failure gracefully"""
     import traceback
     logger.debug(traceback.format_exc())
     
-    # Set system to offline mode due to initialization failure
     st.session_state['system_status'] = 'offline'
     st.session_state['connection_status'] = 'offline'
     st.session_state['offline_mode'] = True
@@ -500,33 +436,27 @@ def _handle_initialization_failure():
     return False
 
 def initialize_legal_compliance():
-    """Initialize legal compliance components with FIXED RAG system"""
     try:
         if not LEGAL_COMPLIANCE_AVAILABLE and not FIXED_LEGAL_AVAILABLE:
             st.session_state['legal_system_available'] = False
             st.session_state['legal_system_type'] = 'unavailable'
             return False
         
-        # Get dependencies from container
         from dependency_container import container
         
-        # Update system initializer with FIXED legal components if available
         if FIXED_LEGAL_AVAILABLE:
             try:
                 from system_initializer import system_initializer
-                update_system_initializer_with_fixed_legal(system_initializer)
-                logger.info("System initializer updated with FIXED legal components")
+                update_system_initializer_no_web(system_initializer)
+                logger.info("System initializer updated with legal components (no web search)")
             except Exception as e:
                 logger.warning(f"Could not update system initializer: {e}")
         
-        # Check if legal components are available in container
         if container.has('legal_rag_engine') and container.has('legal_chatbot'):
             st.session_state['legal_rag_engine'] = container.get('legal_rag_engine')
             st.session_state['legal_chatbot'] = container.get('legal_chatbot')
-            st.session_state['legal_search_engine'] = container.get('legal_search_engine')
             
-            # Test the legal system if FIXED version is available
-            return _test_legal_system()
+            return _test_legal_system_no_web()
         else:
             st.session_state['legal_system_available'] = False
             st.session_state['legal_system_type'] = 'unavailable'
@@ -539,30 +469,28 @@ def initialize_legal_compliance():
         st.session_state['legal_system_type'] = 'unavailable'
         return False
 
-def _test_legal_system():
-    """Test legal system capabilities and set appropriate status"""
+def _test_legal_system_no_web():
     if FIXED_LEGAL_AVAILABLE and hasattr(st.session_state['legal_chatbot'], 'get_system_status'):
         try:
             system_status = st.session_state['legal_chatbot'].get_system_status()
-            logger.info(f"Legal system status: {system_status}")
+            logger.info(f"Legal system status (no web): {system_status}")
             
-            # Check if we have a real RAG connection
             rag_test = system_status.get('rag_connection_test', {})
             if rag_test.get('status') == 'success':
                 st.session_state['legal_system_available'] = True
                 st.session_state['legal_system_type'] = 'full_rag'
                 st.session_state['legal_document_count'] = rag_test.get('total_documents', 0)
-                logger.info("✅ FULL Legal RAG system with Weaviate available")
+                logger.info("✅ Legal RAG system with Weaviate available (database only)")
             elif rag_test.get('status') == 'mock':
                 st.session_state['legal_system_available'] = True
                 st.session_state['legal_system_type'] = 'basic'
                 st.session_state['legal_document_count'] = 0
-                logger.info("🔵 Basic legal system available (mock)")
+                logger.info("🔵 Basic legal system available (mock, database only)")
             else:
                 st.session_state['legal_system_available'] = True
                 st.session_state['legal_system_type'] = 'limited'
                 st.session_state['legal_document_count'] = 0
-                logger.info("⚠️ Limited legal system available (no Weaviate connection)")
+                logger.info("⚠️ Limited legal system available (database only)")
         except Exception as e:
             logger.error(f"Error testing legal system: {e}")
             st.session_state['legal_system_available'] = True
@@ -572,16 +500,11 @@ def _test_legal_system():
         st.session_state['legal_system_available'] = True
         st.session_state['legal_system_type'] = 'basic'
         st.session_state['legal_document_count'] = 0
-        logger.info("Basic legal compliance system available")
+        logger.info("Basic legal compliance system available (database only)")
     
     return True
 
-# =============================================================================
-# UI UTILITY FUNCTIONS
-# =============================================================================
-
 def display_status_indicator():
-    """Display system status indicator"""
     status = st.session_state['system_status']
     
     if status == 'online':
@@ -596,7 +519,7 @@ def display_status_indicator():
             <span>●</span>&nbsp;System offline - Working with cached data only
         </div>
         """, unsafe_allow_html=True)
-    else:  # degraded
+    else:
         st.markdown("""
         <div class="status-indicator degraded">
             <span>●</span>&nbsp;System degraded - Some services may be unavailable
@@ -604,7 +527,6 @@ def display_status_indicator():
         """, unsafe_allow_html=True)
 
 def display_error(error, user_message=None):
-    """Display error message with suggestions"""
     if CORE_IMPORTS_AVAILABLE:
         error_data = format_error_for_display(error, user_message)
     else:
@@ -628,12 +550,10 @@ def display_error(error, user_message=None):
     """, unsafe_allow_html=True)
 
 def create_loading_state(message="Processing your request...", show_spinner=True):
-    """Create a consistent loading state with progress reporting capability"""
     container = st.empty()
     progress_bar = None
     start_time = time.time()
     
-    # Initialize UI elements
     if show_spinner:
         with container.container():
             st.markdown(f"""
@@ -647,7 +567,6 @@ def create_loading_state(message="Processing your request...", show_spinner=True
         container.info(message)
     
     def update(progress=None, message=None):
-        """Update the loading state"""
         nonlocal container, progress_bar
         
         if message:
@@ -668,7 +587,6 @@ def create_loading_state(message="Processing your request...", show_spinner=True
             progress_bar.progress(progress)
     
     def complete(success=True, message=None):
-        """Complete the loading state"""
         nonlocal container, start_time
         
         elapsed_time = time.time() - start_time
@@ -686,181 +604,7 @@ def create_loading_state(message="Processing your request...", show_spinner=True
     
     return update, complete
 
-# =============================================================================
-# LEGAL COMPLIANCE INTERFACE
-# =============================================================================
-def _display_legal_system_unavailable():
-    """Display UI when legal system is not available"""
-    st.error("⚠️ Legal compliance system is not available. Please contact support.")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Try to Initialize Legal System"):
-            initialize_legal_compliance()
-            st.rerun()
-    with col2:
-        if st.button("Run Legal System Diagnostics"):
-            st.session_state['show_legal_diagnostics'] = True
-            st.rerun()
-    
-    # Show diagnostics if requested
-    if st.session_state.get('show_legal_diagnostics', False):
-        st.markdown("### Legal System Diagnostics")
-        try:
-            from dependency_container import container
-            if FIXED_LEGAL_AVAILABLE:
-                from system_initializer_legal_fixes import get_legal_system_diagnostics
-                diagnostics = get_legal_system_diagnostics(container)
-                
-                st.markdown(f"**Overall Status:** {diagnostics['overall_status']}")
-                
-                for component, status in diagnostics['components'].items():
-                    if status.get('available'):
-                        component_type = status.get('type', 'unknown')
-                        if component_type == 'real':
-                            st.success(f"✅ {component}: Fully operational")
-                        elif component_type == 'enhanced':
-                            st.success(f"✅ {component}: Enhanced version")
-                        elif component_type == 'limited':
-                            st.warning(f"⚠️ {component}: Limited functionality")
-                        else:
-                            st.info(f"ℹ️ {component}: {component_type}")
-                    else:
-                        st.error(f"❌ {component}: {status.get('error', 'Unavailable')}")
-                
-                if diagnostics.get('recommendations'):
-                    st.markdown("**Recommendations:**")
-                    for rec in diagnostics['recommendations']:
-                        st.markdown(f"• {rec}")
-            else:
-                st.warning("FIXED legal diagnostics not available")
-            
-            if st.button("Hide Diagnostics"):
-                st.session_state['show_legal_diagnostics'] = False
-                st.rerun()
-        except Exception as e:
-            st.error(f"Could not run diagnostics: {e}")
-
-def _display_legal_system_status():
-    """Display enhanced legal system status"""
-    system_type = st.session_state.get('legal_system_type', 'unknown')
-    
-    if system_type == 'full_rag':
-        st.markdown("""
-        <div class="system-status-full-rag">
-            🟢 <strong>Full Legal RAG System Active</strong> - Connected to Weaviate legal database with AI-powered analysis
-        </div>
-        """, unsafe_allow_html=True)
-    elif system_type == 'limited':
-        st.markdown("""
-        <div class="system-status-limited">
-            🟡 <strong>Limited Legal System</strong> - Basic functionality available, no database connection
-        </div>
-        """, unsafe_allow_html=True)
-    elif system_type == 'basic':
-        st.markdown("""
-        <div class="system-status-basic">
-            🔵 <strong>Basic Legal System</strong> - Using fallback responses for demonstration
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.warning("⚪ **Legal System Status Unknown**")
-
-def _display_legal_system_metrics():
-    """Display legal system metrics"""
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        system_type = st.session_state.get('legal_system_type', 'unknown')
-        if system_type == 'full_rag':
-            system_status = "🟢 Full RAG"
-        elif system_type == 'limited':
-            system_status = "🟡 Limited"
-        elif system_type == 'basic':
-            system_status = "🔵 Basic"
-        else:
-            system_status = "⚪ Unknown"
-        st.metric("System Type", system_status)
-    
-    with col2:
-        st.metric("Queries Today", st.session_state['legal_query_count'])
-    
-    with col3:
-        legal_session_active = st.session_state['current_legal_session'] is not None
-        st.metric("Session", "Active" if legal_session_active else "None")
-    
-    with col4:
-        doc_count = st.session_state.get('legal_document_count', 0)
-        if doc_count > 0:
-            st.metric("Legal Documents", f"{doc_count:,}")
-        else:
-            st.metric("Legal Documents", "N/A")
-
-def _display_legal_diagnostics_panel():
-    """Display legal diagnostics panel"""
-    with st.expander("🔧 System Diagnostics", expanded=False):
-        if st.button("Run Full Legal System Diagnostics"):
-            try:
-                from dependency_container import container
-                if FIXED_LEGAL_AVAILABLE:
-                    from system_initializer_legal_fixes import get_legal_system_diagnostics
-                    diagnostics = get_legal_system_diagnostics(container)
-                    
-                    st.markdown("### Legal System Diagnostics Report")
-                    st.markdown(f"**Overall Status:** `{diagnostics['overall_status']}`")
-                    st.markdown(f"**Report Generated:** {diagnostics['timestamp']}")
-                    
-                    st.markdown("#### Component Status")
-                    for component, status in diagnostics['components'].items():
-                        with st.container():
-                            if status.get('available'):
-                                component_type = status.get('type', 'unknown')
-                                if component_type == 'real':
-                                    st.success(f"✅ **{component}**: Fully operational")
-                                elif component_type == 'enhanced':
-                                    st.success(f"✅ **{component}**: Enhanced version")
-                                elif component_type == 'limited':
-                                    st.warning(f"⚠️ **{component}**: Limited functionality")
-                                elif component_type == 'mock':
-                                    st.info(f"🔵 **{component}**: Mock implementation")
-                                else:
-                                    st.info(f"ℹ️ **{component}**: {component_type}")
-                                
-                                # Show additional details if available
-                                if 'connection_test' in status:
-                                    test_result = status['connection_test']
-                                    if test_result.get('total_documents', 0) > 0:
-                                        st.markdown(f"   📄 Documents: {test_result['total_documents']:,}")
-                                    st.markdown(f"   🔗 Connection: {test_result.get('message', 'OK')}")
-                            else:
-                                st.error(f"❌ **{component}**: {status.get('error', 'Unavailable')}")
-                    
-                    if diagnostics.get('recommendations'):
-                        st.markdown("#### Recommendations")
-                        for rec in diagnostics['recommendations']:
-                            st.markdown(f"💡 {rec}")
-                else:
-                    st.warning("FIXED legal diagnostics not available")
-            except Exception as e:
-                st.error(f"Could not run diagnostics: {e}")
-
-def _display_legal_disclaimer():
-    """Display legal disclaimer"""
-    st.markdown("""
-    <div class="legal-disclaimer">
-        <h4>⚖️ Legal Disclaimer</h4>
-        <p><strong>Important:</strong> This AI assistant provides general legal information based on available legal documents and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney licensed to practice in the relevant jurisdiction.</p>
-        <ul>
-            <li>Responses are for informational purposes only</li>
-            <li>Laws and regulations may change frequently</li>
-            <li>Individual circumstances may affect legal outcomes</li>
-            <li>Always verify information with current legal sources</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
 def _display_legal_session_management():
-    """Display legal session management interface"""
     st.markdown("### 💬 Legal Consultation Session")
     
     col1, col2, col3 = st.columns(3)
@@ -897,7 +641,6 @@ def _display_legal_session_management():
             st.session_state['show_session_report'] = True
             st.rerun()
     
-    # Display current session info
     if st.session_state.get('current_legal_session'):
         st.markdown(f"""
         <div class="legal-session-info">
@@ -906,11 +649,9 @@ def _display_legal_session_management():
         </div>
         """, unsafe_allow_html=True)
 
-def _display_legal_chat_interface():
-    """Display the main legal chat interface"""
+def _display_legal_chat_interface_no_web():
     st.markdown("### 💬 Ask Your Legal Question")
     
-    # Chat input and filters
     col1, col2 = st.columns([3, 1])
     
     with col1:
@@ -923,7 +664,6 @@ def _display_legal_chat_interface():
     with col2:
         st.markdown("**Filters:**")
         
-        # Get available categories and jurisdictions
         legal_categories = ["All Categories"]
         jurisdictions = ["Saudi Arabia"]
         
@@ -936,54 +676,45 @@ def _display_legal_chat_interface():
         
         selected_category = st.selectbox("Legal Category:", legal_categories)
         selected_jurisdiction = st.selectbox("Jurisdiction:", jurisdictions)
-        include_web_search = st.checkbox("Include web search", value=True)
+        
+        st.info("📍 **Database Only Mode**\nResponses are based on legal documents in our database only.")
     
-    # Submit button
     if st.button("🔍 Get Legal Guidance", type="primary"):
         if legal_question.strip():
-            _process_legal_question(
+            _process_legal_question_no_web(
                 legal_question, 
                 selected_category if selected_category != "All Categories" else None,
-                selected_jurisdiction,
-                include_web_search
+                selected_jurisdiction
             )
         else:
             st.warning("Please enter a legal question.")
     
-    # Display chat history
-    _display_legal_chat_history()
+    _display_legal_chat_history_no_web()
 
-def _process_legal_question(question, category, jurisdiction, include_web_search):
-    """Process a legal question and display the response"""
+def _process_legal_question_no_web(question, category, jurisdiction):
     if 'legal_chatbot' not in st.session_state:
         st.error("Legal chatbot not available. Please check system status.")
         return
     
     try:
-        # Create loading state
-        update_loading, complete_loading = create_loading_state("Analyzing your legal question...")
+        update_loading, complete_loading = create_loading_state("Analyzing your legal question (database only)...")
         
-        # Ensure session is active
         if not st.session_state.get('current_legal_session'):
             session_id = st.session_state['legal_chatbot'].start_new_session()
             st.session_state['current_legal_session'] = session_id
         
-        # Process the question
-        update_loading(message="Searching legal documents...")
+        update_loading(message="Searching legal documents in database...")
         response = st.session_state['legal_chatbot'].ask_legal_question(
             question=question,
             document_type=category,
-            jurisdiction=jurisdiction,
-            include_web_search=include_web_search
+            jurisdiction=jurisdiction
         )
         
         complete_loading(success=response.get('success', False))
         
         if response.get('success'):
-            # Update query count
             st.session_state['legal_query_count'] += 1
             
-            # Add to chat messages for display
             if 'legal_chat_messages' not in st.session_state:
                 st.session_state['legal_chat_messages'] = []
             
@@ -1000,8 +731,8 @@ def _process_legal_question(question, category, jurisdiction, include_web_search
                 'content': response['response'],
                 'timestamp': datetime.now().isoformat(),
                 'citations': response.get('citations', []),
-                'web_sources': response.get('web_sources', []),
-                'documents_consulted': response.get('documents_consulted', 0)
+                'documents_consulted': response.get('documents_consulted', 0),
+                'source': 'database_only'
             })
             
             st.rerun()
@@ -1012,8 +743,7 @@ def _process_legal_question(question, category, jurisdiction, include_web_search
         complete_loading(success=False, message=f"Error: {str(e)}")
         st.error(f"Error processing legal question: {e}")
 
-def _display_legal_chat_history():
-    """Display the legal chat history"""
+def _display_legal_chat_history_no_web():
     if st.session_state.get('legal_chat_messages'):
         st.markdown("### 📝 Conversation History")
         
@@ -1026,16 +756,17 @@ def _display_legal_chat_history():
                 </div>
                 """, unsafe_allow_html=True)
             else:
-                # Fix: Extract the content replacement outside the f-string
                 formatted_content = message['content'].replace('\n', '<br>')
+                source_info = message.get('source', 'unknown')
+                
                 st.markdown(f"""
                 <div class="chat-message assistant-message">
-                    <strong>Legal Assistant:</strong><br>
+                    <strong>Legal Assistant (Database Only):</strong><br>
                     {formatted_content}
+                    <br><small>Source: {source_info}</small>
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Show citations if available
                 if message.get('citations'):
                     with st.expander(f"📚 Citations ({len(message['citations'])})"):
                         for i, citation in enumerate(message['citations'], 1):
@@ -1044,108 +775,31 @@ def _display_legal_chat_history():
                                 <strong>{i}. {citation.get('title', 'Legal Document')}</strong><br>
                                 Type: {citation.get('document_type', 'Unknown')}<br>
                                 Jurisdiction: {citation.get('jurisdiction', 'Unknown')}<br>
-                                Source: {citation.get('source', 'Unknown')}
+                                Source: Legal Database
                             </div>
                             """, unsafe_allow_html=True)
                 
-                # Show web sources if available
-                if message.get('web_sources'):
-                    with st.expander(f"🌐 Web Sources ({len(message['web_sources'])})"):
-                        for source in message['web_sources']:
-                            st.markdown(f"**{source.get('title', 'Web Source')}**")
-                            st.markdown(f"URL: {source.get('url', 'N/A')}")
-                            st.markdown(f"Summary: {source.get('summary', 'N/A')}")
-                            st.markdown("---")
+                docs_consulted = message.get('documents_consulted', 0)
+                if docs_consulted > 0:
+                    st.info(f"📄 Consulted {docs_consulted} legal documents from database")
 
-
-def _display_additional_legal_tools():
-    """Display additional legal tools"""
+def _display_additional_legal_tools_no_web():
     st.markdown("### 🛠️ Additional Legal Tools")
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("🔍 Legal Precedent Search"):
-            st.session_state['show_precedent_search'] = True
-            st.rerun()
-    
-    with col2:
-        if st.button("📋 Compliance Requirements"):
-            st.session_state['show_compliance_tool'] = True
-            st.rerun()
-    
-    with col3:
         if st.button("📊 Session Analytics"):
             st.session_state['show_session_report'] = True
             st.rerun()
     
-    # Display tools if requested
-    _display_legal_tools_content()
+    with col2:
+        if st.button("📋 Document Categories"):
+            _show_legal_categories()
+    
+    _display_legal_tools_content_no_web()
 
-def _display_legal_tools_content():
-    """Display content for additional legal tools"""
-    
-    # Legal Precedent Search
-    if st.session_state.get('show_precedent_search'):
-        with st.expander("🔍 Legal Precedent Search", expanded=True):
-            case_type = st.text_input("Case Type:", placeholder="e.g., Commercial dispute")
-            jurisdiction = st.selectbox("Jurisdiction:", ["Saudi Arabia", "GCC", "International"])
-            
-            if st.button("Search Precedents") and case_type:
-                if 'legal_search_engine' in st.session_state:
-                    try:
-                        precedents = st.session_state['legal_search_engine'].search_legal_precedents(
-                            case_type, jurisdiction
-                        )
-                        if precedents:
-                            for precedent in precedents:
-                                st.markdown(f"**{precedent.get('case_title', 'Legal Case')}**")
-                                st.markdown(f"Summary: {precedent.get('summary', 'N/A')}")
-                                st.markdown("---")
-                        else:
-                            st.info("No precedents found for this case type.")
-                    except Exception as e:
-                        st.error(f"Error searching precedents: {e}")
-            
-            if st.button("Close Precedent Search"):
-                st.session_state['show_precedent_search'] = False
-                st.rerun()
-    
-    # Compliance Requirements Tool
-    if st.session_state.get('show_compliance_tool'):
-        with st.expander("📋 Compliance Requirements Tool", expanded=True):
-            business_type = st.text_input("Business Type:", placeholder="e.g., Technology company")
-            jurisdiction = st.selectbox("Jurisdiction:", ["Saudi Arabia", "UAE", "Qatar"])
-            
-            if st.button("Get Compliance Requirements") and business_type:
-                if 'legal_search_engine' in st.session_state:
-                    try:
-                        requirements = st.session_state['legal_search_engine'].search_compliance_requirements(
-                            business_type, jurisdiction
-                        )
-                        
-                        if requirements.get('requirements'):
-                            st.markdown("**Legal Requirements:**")
-                            for req in requirements['requirements']:
-                                st.markdown(f"• {req}")
-                        
-                        if requirements.get('licenses_needed'):
-                            st.markdown("**Licenses Needed:**")
-                            for license in requirements['licenses_needed']:
-                                st.markdown(f"• {license}")
-                        
-                        if requirements.get('regulatory_bodies'):
-                            st.markdown("**Regulatory Bodies:**")
-                            for body in requirements['regulatory_bodies']:
-                                st.markdown(f"• {body}")
-                    except Exception as e:
-                        st.error(f"Error getting compliance requirements: {e}")
-            
-            if st.button("Close Compliance Tool"):
-                st.session_state['show_compliance_tool'] = False
-                st.rerun()
-    
-    # Session Report
+def _display_legal_tools_content_no_web():
     if st.session_state.get('show_session_report'):
         with st.expander("📊 Session Analytics", expanded=True):
             if 'legal_chatbot' in st.session_state:
@@ -1170,6 +824,8 @@ def _display_legal_tools_content():
                         if session_summary.get('jurisdictions_consulted'):
                             st.markdown("**Jurisdictions Consulted:**")
                             st.markdown(", ".join(session_summary['jurisdictions_consulted']))
+                        
+                        st.info("📍 All responses are based on legal database documents only.")
                     else:
                         st.info("No active session to analyze.")
                 except Exception as e:
@@ -1179,9 +835,25 @@ def _display_legal_tools_content():
                 st.session_state['show_session_report'] = False
                 st.rerun()
 
-# Clear chat history button
+def _show_legal_categories():
+    if 'legal_chatbot' in st.session_state:
+        try:
+            categories = st.session_state['legal_chatbot'].get_legal_categories()
+            jurisdictions = st.session_state['legal_chatbot'].get_available_jurisdictions()
+            
+            st.markdown("**Available Legal Categories:**")
+            for category in categories:
+                st.markdown(f"• {category}")
+            
+            st.markdown("**Available Jurisdictions:**")
+            for jurisdiction in jurisdictions:
+                st.markdown(f"• {jurisdiction}")
+            
+            st.info("📍 All legal guidance is based on documents in our legal database.")
+        except Exception as e:
+            st.error(f"Error getting legal categories: {e}")
+
 def _display_chat_controls():
-    """Display chat control buttons"""
     col1, col2 = st.columns(2)
     
     with col1:
@@ -1199,7 +871,6 @@ def _display_chat_controls():
                     'messages': st.session_state['legal_chat_messages']
                 }
                 
-                import json
                 json_str = json.dumps(chat_data, indent=2, ensure_ascii=False)
                 st.download_button(
                     label="Download JSON",
@@ -1209,223 +880,26 @@ def _display_chat_controls():
                 )
             else:
                 st.warning("No chat history to download.")
-def legal_compliance_interface():
 
-    """Enhanced Legal compliance chatbot interface with FIXED RAG diagnostics"""
+def legal_compliance_interface():
     st.markdown('<h2 class="sub-header">Legal Compliance Assistant</h2>', unsafe_allow_html=True)
     
-    # Check if legal system is available
     if not st.session_state['legal_system_available']:
         _display_legal_system_unavailable()
         return
     
-    # Display enhanced system status
-    _display_legal_system_status()
-    
-    # Display system metrics
+    _display_legal_system_status_no_web()
     _display_legal_system_metrics()
-    
-    # System diagnostics expander
     _display_legal_diagnostics_panel()
-    
-    # Display legal disclaimer
     _display_legal_disclaimer()
-    
-    # Session management
     _display_legal_session_management()
-    
-    # Main legal chat interface
-    _display_legal_chat_interface()
-    
-    # Additional legal tools
-    _display_additional_legal_tools()
-
-def _display_legal_system_unavailable():
-    """Display UI when legal system is not available"""
-    st.error("⚠️ Legal compliance system is not available. Please contact support.")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Try to Initialize Legal System"):
-            initialize_legal_compliance()
-            st.rerun()
-    with col2:
-        if st.button("Run Legal System Diagnostics"):
-            st.session_state['show_legal_diagnostics'] = True
-            st.rerun()
-    
-    # Show diagnostics if requested
-    if st.session_state.get('show_legal_diagnostics', False):
-        st.markdown("### Legal System Diagnostics")
-        try:
-            from dependency_container import container
-            if FIXED_LEGAL_AVAILABLE:
-                diagnostics = get_legal_system_diagnostics(container)
-                
-                st.markdown(f"**Overall Status:** {diagnostics['overall_status']}")
-                
-                for component, status in diagnostics['components'].items():
-                    if status.get('available'):
-                        component_type = status.get('type', 'unknown')
-                        if component_type == 'real':
-                            st.success(f"✅ {component}: Fully operational")
-                        elif component_type == 'enhanced':
-                            st.success(f"✅ {component}: Enhanced version")
-                        elif component_type == 'limited':
-                            st.warning(f"⚠️ {component}: Limited functionality")
-                        else:
-                            st.info(f"ℹ️ {component}: {component_type}")
-                    else:
-                        st.error(f"❌ {component}: {status.get('error', 'Unavailable')}")
-                
-                if diagnostics.get('recommendations'):
-                    st.markdown("**Recommendations:**")
-                    for rec in diagnostics['recommendations']:
-                        st.markdown(f"• {rec}")
-            else:
-                st.warning("FIXED legal diagnostics not available")
-            
-            if st.button("Hide Diagnostics"):
-                st.session_state['show_legal_diagnostics'] = False
-                st.rerun()
-        except Exception as e:
-            st.error(f"Could not run diagnostics: {e}")
-
-def _display_legal_system_status():
-    """Display enhanced legal system status"""
-    system_type = st.session_state.get('legal_system_type', 'unknown')
-    
-    if system_type == 'full_rag':
-        st.markdown("""
-        <div class="system-status-full-rag">
-            🟢 <strong>Full Legal RAG System Active</strong> - Connected to Weaviate legal database with AI-powered analysis
-        </div>
-        """, unsafe_allow_html=True)
-    elif system_type == 'limited':
-        st.markdown("""
-        <div class="system-status-limited">
-            🟡 <strong>Limited Legal System</strong> - Basic functionality available, no database connection
-        </div>
-        """, unsafe_allow_html=True)
-    elif system_type == 'basic':
-        st.markdown("""
-        <div class="system-status-basic">
-            🔵 <strong>Basic Legal System</strong> - Using fallback responses for demonstration
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.warning("⚪ **Legal System Status Unknown**")
-
-def _display_legal_system_metrics():
-    """Display legal system metrics"""
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        system_type = st.session_state.get('legal_system_type', 'unknown')
-        if system_type == 'full_rag':
-            system_status = "🟢 Full RAG"
-        elif system_type == 'limited':
-            system_status = "🟡 Limited"
-        elif system_type == 'basic':
-            system_status = "🔵 Basic"
-        else:
-            system_status = "⚪ Unknown"
-        st.metric("System Type", system_status)
-    
-    with col2:
-        st.metric("Queries Today", st.session_state['legal_query_count'])
-    
-    with col3:
-        legal_session_active = st.session_state['current_legal_session'] is not None
-        st.metric("Session", "Active" if legal_session_active else "None")
-    
-    with col4:
-        doc_count = st.session_state.get('legal_document_count', 0)
-        if doc_count > 0:
-            st.metric("Legal Documents", f"{doc_count:,}")
-
-# =============================================================================
-# MAIN APPLICATION INTERFACE - Add this to the end of your app.py file
-# =============================================================================
-
-def main():
-    """Main application interface"""
-    
-    # Initialize the application
-    if not initialize_application():
-        st.error("⚠️ Application initialization failed. Some features may not be available.")
-    
-    # Display main header
-    st.markdown('<h1 class="main-header">📊 LinkSaudi Market Intelligence Platform</h1>', unsafe_allow_html=True)
-    
-    # Display system status
-    display_status_indicator()
-    
-    # Create sidebar navigation
-    with st.sidebar:
-        st.markdown("### 🧭 Navigation")
-        
-        # Navigation options
-        nav_options = [
-            "🏠 Dashboard",
-            "📊 Market Reports", 
-            "💬 Report Chat",
-            "⚖️ Legal Compliance",
-            "🔧 System Status",
-            "📚 Help & Documentation"
-        ]
-        
-        selected_page = st.selectbox("Choose a section:", nav_options, key="main_navigation")
-        
-        # System controls
-        st.markdown("### ⚙️ System Controls")
-        
-        # Offline mode toggle
-        offline_mode = st.checkbox(
-            "Offline Mode", 
-            value=st.session_state.get('offline_mode', False),
-            help="Work with cached data only"
-        )
-        
-        if offline_mode != st.session_state.get('offline_mode', False):
-            st.session_state['offline_mode'] = offline_mode
-            st.rerun()
-        
-        # System refresh
-        if st.button("🔄 Refresh System"):
-            st.session_state['initialized'] = False
-            st.rerun()
-        
-        # Quick system info
-        st.markdown("### 📈 Quick Stats")
-        st.metric("System Status", st.session_state.get('system_status', 'Unknown'))
-        st.metric("Reports Generated", len(st.session_state.get('reports', [])))
-        st.metric("Legal Queries", st.session_state.get('legal_query_count', 0))
-    
-    # Main content area based on navigation
-    if selected_page == "🏠 Dashboard":
-        dashboard_interface()
-    
-    elif selected_page == "📊 Market Reports":
-        market_reports_interface()
-    
-    elif selected_page == "💬 Report Chat":
-        report_chat_interface()
-    
-    elif selected_page == "⚖️ Legal Compliance":
-        legal_compliance_interface()
-    
-    elif selected_page == "🔧 System Status":
-        system_status_interface()
-    
-    elif selected_page == "📚 Help & Documentation":
-        help_documentation_interface()
+    _display_legal_chat_interface_no_web()
+    _display_additional_legal_tools_no_web()
+    _display_chat_controls()
 
 def dashboard_interface():
-    """Dashboard overview interface"""
     st.markdown('<h2 class="sub-header">🏠 Dashboard Overview</h2>', unsafe_allow_html=True)
     
-    # Welcome message
     st.markdown("""
     <div class="section-card">
         <h3>Welcome to LinkSaudi Market Intelligence Platform</h3>
@@ -1433,7 +907,6 @@ def dashboard_interface():
     </div>
     """, unsafe_allow_html=True)
     
-    # System overview metrics
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -1453,7 +926,6 @@ def dashboard_interface():
         legal_system_available = st.session_state.get('legal_system_available', False)
         st.metric("Legal System", "Active" if legal_system_available else "Inactive")
     
-    # Feature overview
     st.markdown("### 🚀 Available Features")
     
     col1, col2 = st.columns(2)
@@ -1483,19 +955,18 @@ def dashboard_interface():
         
         st.markdown(f"""
         <div class="section-card">
-            <h4>⚖️ Legal Compliance</h4>
+            <h4>⚖️ Legal Compliance (Database Only)</h4>
             <ul>
                 <li>Saudi Arabian legal guidance</li>
-                <li>Regulatory compliance checking</li>
                 <li>Legal document analysis</li>
-                <li>Precedent research</li>
+                <li>Regulatory compliance checking</li>
                 <li>Consultation session management</li>
+                <li>Database-only responses (no web search)</li>
             </ul>
             <p><strong>Status:</strong> {legal_description}</p>
         </div>
         """, unsafe_allow_html=True)
     
-    # Quick actions
     st.markdown("### ⚡ Quick Actions")
     
     col1, col2, col3 = st.columns(3)
@@ -1516,15 +987,12 @@ def dashboard_interface():
             st.rerun()
 
 def market_reports_interface():
-    """Market reports generation interface"""
     st.markdown('<h2 class="sub-header">📊 Market Intelligence Reports</h2>', unsafe_allow_html=True)
     
-    # Check if market report system is available
     if not CORE_IMPORTS_AVAILABLE:
         st.error("⚠️ Market report system is not fully available. Please check system dependencies.")
         return
     
-    # Report generation form
     with st.form("report_generation_form"):
         st.markdown("### 📝 Generate New Market Report")
         
@@ -1555,7 +1023,6 @@ def market_reports_interface():
                 default=["Web Research Enhancement", "Visual Charts"]
             )
         
-        # Advanced options
         with st.expander("🔧 Advanced Options"):
             include_visuals = "Visual Charts" in report_options
             enhance_with_web = "Web Research Enhancement" in report_options
@@ -1565,7 +1032,6 @@ def market_reports_interface():
                 placeholder="e.g., Focus on startup ecosystem, regulatory changes, market size..."
             )
         
-        # Submit button
         submitted = st.form_submit_button("🚀 Generate Report", type="primary")
         
         if submitted:
@@ -1574,7 +1040,6 @@ def market_reports_interface():
             else:
                 st.error("Please fill in required fields (Title and Sectors)")
     
-    # Display existing reports
     st.markdown("### 📚 Generated Reports")
     
     if st.session_state.get('reports'):
@@ -1599,12 +1064,9 @@ def market_reports_interface():
         st.info("No reports generated yet. Create your first report using the form above!")
 
 def generate_market_report(title, sectors, geography, enhance_with_web, include_visuals, custom_focus):
-    """Generate a market report"""
     try:
-        # Create loading state
         update_loading, complete_loading = create_loading_state("Generating your market report...")
         
-        # Try to use the market report system
         from dependency_container import container
         
         if container.has('market_report_system'):
@@ -1624,13 +1086,11 @@ def generate_market_report(title, sectors, geography, enhance_with_web, include_
             if result and result.get('report_data'):
                 update_loading(progress=0.8, message="Finalizing report...")
                 
-                # Add to session state
                 st.session_state['reports'].append(result['report_data'])
                 st.session_state['current_report'] = result['report_data']
                 
                 complete_loading(success=True, message="Report generated successfully!")
                 
-                # Show success message with next steps
                 st.success("✅ Report generated successfully!")
                 
                 col1, col2 = st.columns(2)
@@ -1659,10 +1119,8 @@ def generate_market_report(title, sectors, geography, enhance_with_web, include_
         st.error(f"Error generating report: {str(e)}")
 
 def report_chat_interface():
-    """Report chat and analysis interface"""
     st.markdown('<h2 class="sub-header">💬 Report Analysis & Chat</h2>', unsafe_allow_html=True)
     
-    # Check if we have a current report
     if not st.session_state.get('current_report'):
         st.info("No report selected. Please generate or select a report first.")
         
@@ -1679,7 +1137,6 @@ def report_chat_interface():
                 st.rerun()
         return
     
-    # Display current report info
     report = st.session_state['current_report']
     st.markdown(f"""
     <div class="section-card">
@@ -1690,10 +1147,8 @@ def report_chat_interface():
     </div>
     """, unsafe_allow_html=True)
     
-    # Chat interface
     st.markdown("### 💬 Ask Questions About This Report")
     
-    # Chat input
     user_question = st.text_input(
         "Ask a question about the report:", 
         placeholder="e.g., What are the key market trends? Who are the main competitors?"
@@ -1702,7 +1157,6 @@ def report_chat_interface():
     if st.button("🔍 Ask Question") and user_question:
         process_report_question(user_question, report)
     
-    # Display chat history
     if st.session_state.get('chat_messages'):
         st.markdown("### 📝 Conversation History")
         
@@ -1720,7 +1174,6 @@ def report_chat_interface():
                 </div>
                 """, unsafe_allow_html=True)
     
-    # Report actions
     st.markdown("### 🛠️ Report Actions")
     col1, col2, col3 = st.columns(3)
     
@@ -1743,12 +1196,9 @@ def report_chat_interface():
             )
 
 def process_report_question(question, report):
-    """Process a question about the report"""
     try:
-        # Create loading state
         update_loading, complete_loading = create_loading_state("Analyzing your question...")
         
-        # Try to use report conversation system
         from dependency_container import container
         
         if container.has('report_conversation'):
@@ -1757,7 +1207,6 @@ def process_report_question(question, report):
             
             complete_loading(success=True)
             
-            # Add to chat history
             if 'chat_messages' not in st.session_state:
                 st.session_state['chat_messages'] = []
             
@@ -1783,10 +1232,8 @@ def process_report_question(question, report):
         st.error(f"Error processing question: {str(e)}")
 
 def display_full_report(report):
-    """Display the full report"""
     st.markdown("### 📄 Full Report View")
     
-    # Report header
     st.markdown(f"""
     <div class="report-header">
         <h2>{report.get('title', 'Market Report')}</h2>
@@ -1794,9 +1241,7 @@ def display_full_report(report):
     </div>
     """, unsafe_allow_html=True)
     
-    # Report sections
     for section in report.get('sections', []):
-        # Fix: Extract the content replacement outside the f-string
         section_content = section.get('content', 'No content available').replace('\n', '<br>')
         st.markdown(f"""
         <div class="report-section">
@@ -1807,15 +1252,13 @@ def display_full_report(report):
         </div>
         """, unsafe_allow_html=True)
         
-        # Display subsections if available
         for subsection in section.get('subsections', []):
             st.markdown(f"**{subsection.get('title', 'Subsection')}**")
             st.markdown(subsection.get('content', 'No content available'))
+
 def system_status_interface():
-    """System status and diagnostics interface"""
     st.markdown('<h2 class="sub-header">🔧 System Status & Diagnostics</h2>', unsafe_allow_html=True)
     
-    # Overall system status
     st.markdown("### 📊 System Overview")
     
     if CORE_IMPORTS_AVAILABLE:
@@ -1838,7 +1281,6 @@ def system_status_interface():
                 legal_status = system_overview.get('legal_system', {}).get('status', 'unknown')
                 st.metric("Legal System", legal_status.title())
             
-            # Component status details
             st.markdown("### 🔍 Component Status")
             
             for component, status in system_overview.get('component_status', {}).items():
@@ -1847,10 +1289,11 @@ def system_status_interface():
                 else:
                     st.error(f"❌ **{component}**: {status.get('description', 'Unavailable')}")
             
-            # Legal system details
             legal_system = system_overview.get('legal_system', {})
             if legal_system.get('components'):
                 st.markdown("### ⚖️ Legal System Details")
+                
+                st.info(f"🔧 **Web Search Status:** {'Disabled' if not legal_system.get('web_search_enabled', True) else 'Enabled'}")
                 
                 for comp_name, comp_status in legal_system['components'].items():
                     if comp_status.get('available'):
@@ -1871,7 +1314,6 @@ def system_status_interface():
     else:
         st.warning("Core system imports not available. Limited status information.")
     
-    # System controls
     st.markdown("### ⚙️ System Controls")
     
     col1, col2, col3 = st.columns(3)
@@ -1885,7 +1327,6 @@ def system_status_interface():
     
     with col2:
         if st.button("🧹 Clear All Cache"):
-            # Clear various caches
             st.session_state['chat_messages'] = []
             st.session_state['legal_chat_messages'] = []
             st.success("Cache cleared!")
@@ -1904,10 +1345,8 @@ def system_status_interface():
                 st.error("Diagnostics export not available")
 
 def help_documentation_interface():
-    """Help and documentation interface"""
     st.markdown('<h2 class="sub-header">📚 Help & Documentation</h2>', unsafe_allow_html=True)
     
-    # User guide
     st.markdown("""
     ### 🚀 Getting Started
     
@@ -1919,11 +1358,12 @@ def help_documentation_interface():
     - **Interactive Analysis**: Chat with your reports to get specific insights
     - **Export Capabilities**: Download reports in PDF and JSON formats
     
-    #### ⚖️ Legal Compliance Features:
+    #### ⚖️ Legal Compliance Features (Database Only):
     - **Saudi Arabian Law Guidance**: Get legal guidance based on local regulations
     - **Document Analysis**: Search through legal document databases
     - **Compliance Checking**: Verify regulatory requirements
     - **Session Management**: Track and export legal consultation sessions
+    - **Database Only Mode**: Responses based entirely on curated legal documents (no web search)
     
     ### 🔧 System Requirements
     
@@ -1937,6 +1377,7 @@ def help_documentation_interface():
     1. **Market Reports**: Be specific about sectors and geographic focus
     2. **Legal Questions**: Include jurisdiction and business context
     3. **System Performance**: Use offline mode if experiencing connectivity issues
+    4. **Legal System**: Note that web search is disabled for legal compliance
     
     ### 🆘 Troubleshooting
     
@@ -1945,13 +1386,20 @@ def help_documentation_interface():
     2. Try refreshing the system using the sidebar controls
     3. Enable offline mode for basic functionality
     4. Contact support if problems persist
+    
+    ### ⚖️ Legal System Notes
+    
+    The legal compliance system operates in **Database Only Mode**:
+    - All responses are based on legal documents in our database
+    - Web search functionality has been disabled for legal compliance
+    - This ensures consistent and controlled responses
+    - For current legal information, consult with qualified attorneys
     """)
     
-    # FAQ section
     with st.expander("❓ Frequently Asked Questions"):
         st.markdown("""
-        **Q: Why isn't the legal system working?**
-        A: Check if Weaviate is running and legal documents are loaded. The system can work in limited mode without these.
+        **Q: Why isn't the legal web search working?**
+        A: Legal web search has been intentionally disabled. The system now operates in database-only mode for better compliance and consistency.
         
         **Q: How do I improve report quality?**
         A: Enable web research enhancement and provide specific industry focus in your queries.
@@ -1961,9 +1409,11 @@ def help_documentation_interface():
         
         **Q: What does "offline mode" do?**
         A: Offline mode uses cached data only and disables web-based features for better performance.
+        
+        **Q: How accurate is the legal information?**
+        A: Legal information is based on documents in our database. Always consult with qualified attorneys for specific legal matters.
         """)
     
-    # Contact information
     st.markdown("""
     ### 📞 Support
     
@@ -1972,10 +1422,234 @@ def help_documentation_interface():
     - Review the troubleshooting steps above
     - Export system diagnostics for detailed error information
     """)
+def _display_legal_system_status_no_web():
+    system_type = st.session_state.get('legal_system_type', 'unknown')
+    
+    if system_type == 'full_rag':
+        st.markdown("""
+        <div class="system-status-full-rag">
+            🟢 <strong>Legal RAG System Active</strong> - Connected to Weaviate legal database (Database Only)
+        </div>
+        """, unsafe_allow_html=True)
+    elif system_type == 'limited':
+        st.markdown("""
+        <div class="system-status-limited">
+            🟡 <strong>Limited Legal System</strong> - Basic functionality available, database only
+        </div>
+        """, unsafe_allow_html=True)
+    elif system_type == 'basic':
+        st.markdown("""
+        <div class="system-status-basic">
+            🔵 <strong>Basic Legal System</strong> - Using database responses only
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.warning("⚪ **Legal System Status Unknown**")
 
-# =============================================================================
-# RUN THE APPLICATION
-# =============================================================================
+def _display_legal_system_metrics():
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        system_type = st.session_state.get('legal_system_type', 'unknown')
+        if system_type == 'full_rag':
+            system_status = "🟢 Full RAG"
+        elif system_type == 'limited':
+            system_status = "🟡 Limited"
+        elif system_type == 'basic':
+            system_status = "🔵 Basic"
+        else:
+            system_status = "⚪ Unknown"
+        st.metric("System Type", system_status)
+    
+    with col2:
+        st.metric("Queries Today", st.session_state['legal_query_count'])
+    
+    with col3:
+        legal_session_active = st.session_state['current_legal_session'] is not None
+        st.metric("Session", "Active" if legal_session_active else "None")
+    
+    with col4:
+        doc_count = st.session_state.get('legal_document_count', 0)
+        if doc_count > 0:
+            st.metric("Legal Documents", f"{doc_count:,}")
+        else:
+            st.metric("Legal Documents", "N/A")
+
+def _display_legal_diagnostics_panel():
+    with st.expander("🔧 System Diagnostics", expanded=False):
+        if st.button("Run Full Legal System Diagnostics"):
+            try:
+                from dependency_container import container
+                if FIXED_LEGAL_AVAILABLE:
+                    diagnostics = get_legal_system_diagnostics_no_web(container)
+                    
+                    st.markdown("### Legal System Diagnostics Report")
+                    st.markdown(f"**Overall Status:** `{diagnostics['overall_status']}`")
+                    st.markdown(f"**Report Generated:** {diagnostics['timestamp']}")
+                    st.markdown(f"**Web Search Enabled:** {diagnostics['web_search_enabled']}")
+                    
+                    st.markdown("#### Component Status")
+                    for component, status in diagnostics['components'].items():
+                        with st.container():
+                            if status.get('available'):
+                                component_type = status.get('type', 'unknown')
+                                if component_type == 'real':
+                                    st.success(f"✅ **{component}**: Fully operational")
+                                elif component_type == 'enhanced':
+                                    st.success(f"✅ **{component}**: Enhanced version")
+                                elif component_type == 'limited':
+                                    st.warning(f"⚠️ **{component}**: Limited functionality")
+                                elif component_type == 'mock':
+                                    st.info(f"🔵 **{component}**: Mock implementation")
+                                else:
+                                    st.info(f"ℹ️ **{component}**: {component_type}")
+                                
+                                if 'connection_test' in status:
+                                    test_result = status['connection_test']
+                                    if test_result.get('total_documents', 0) > 0:
+                                        st.markdown(f"   📄 Documents: {test_result['total_documents']:,}")
+                                    st.markdown(f"   🔗 Connection: {test_result.get('message', 'OK')}")
+                            else:
+                                st.error(f"❌ **{component}**: {status.get('error', 'Unavailable')}")
+                    
+                    if diagnostics.get('recommendations'):
+                        st.markdown("#### Recommendations")
+                        for rec in diagnostics['recommendations']:
+                            st.markdown(f"💡 {rec}")
+                else:
+                    st.warning("FIXED legal diagnostics not available")
+            except Exception as e:
+                st.error(f"Could not run diagnostics: {e}")
+
+def _display_legal_disclaimer():
+    st.markdown("""
+    <div class="legal-disclaimer">
+        <h4>⚖️ Legal Disclaimer</h4>
+        <p><strong>Important:</strong> This AI assistant provides general legal information based on legal documents in our database and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney licensed in the relevant jurisdiction.</p>
+        <ul>
+            <li>Responses are for informational purposes only</li>
+            <li>Based on legal documents in our database only (no web search)</li>
+            <li>Laws and regulations may change frequently</li>
+            <li>Individual circumstances may affect legal outcomes</li>
+            <li>Always verify information with current legal sources</li>
+        </ul>
+        <p><strong>📍 Database Only Mode:</strong> This system uses only legal documents stored in our database. It does not search the web for current legal information.</p>
+    </div>
+    """, unsafe_allow_html=True)
+def main():
+    if not initialize_application():
+        st.error("⚠️ Application initialization failed. Some features may not be available.")
+    
+    st.markdown('<h1 class="main-header">📊 LinkSaudi Market Intelligence Platform</h1>', unsafe_allow_html=True)
+    
+    display_status_indicator()
+    
+    with st.sidebar:
+        st.markdown("### 🧭 Navigation")
+        
+        nav_options = [
+            "🏠 Dashboard",
+            "📊 Market Reports", 
+            "💬 Report Chat",
+            "⚖️ Legal Compliance",
+            "🔧 System Status",
+            "📚 Help & Documentation"
+        ]
+        
+        selected_page = st.selectbox("Choose a section:", nav_options, key="main_navigation")
+        
+        st.markdown("### ⚙️ System Controls")
+        
+        offline_mode = st.checkbox(
+            "Offline Mode", 
+            value=st.session_state.get('offline_mode', False),
+            help="Work with cached data only"
+        )
+        
+        if offline_mode != st.session_state.get('offline_mode', False):
+            st.session_state['offline_mode'] = offline_mode
+            st.rerun()
+        
+        if st.button("🔄 Refresh System"):
+            st.session_state['initialized'] = False
+            st.rerun()
+        
+        st.markdown("### 📈 Quick Stats")
+        st.metric("System Status", st.session_state.get('system_status', 'Unknown'))
+        st.metric("Reports Generated", len(st.session_state.get('reports', [])))
+        st.metric("Legal Queries", st.session_state.get('legal_query_count', 0))
+        
+        legal_system_info = st.session_state.get('legal_system_type', 'unknown')
+        if legal_system_info != 'unknown':
+            st.info(f"Legal System: {legal_system_info.replace('_', ' ').title()} (Database Only)")
+    
+    if selected_page == "🏠 Dashboard":
+        dashboard_interface()
+    
+    elif selected_page == "📊 Market Reports":
+        market_reports_interface()
+    
+    elif selected_page == "💬 Report Chat":
+        report_chat_interface()
+    
+    elif selected_page == "⚖️ Legal Compliance":
+        legal_compliance_interface()
+    
+    elif selected_page == "🔧 System Status":
+        system_status_interface()
+    
+    elif selected_page == "📚 Help & Documentation":
+        help_documentation_interface()
 
 if __name__ == "__main__":
     main()
+    st.error("⚠️ Legal compliance system is not available. Please contact support.")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Try to Initialize Legal System"):
+            initialize_legal_compliance()
+            st.rerun()
+    with col2:
+        if st.button("Run Legal System Diagnostics"):
+            st.session_state['show_legal_diagnostics'] = True
+            st.rerun()
+    
+    if st.session_state.get('show_legal_diagnostics', False):
+        st.markdown("### Legal System Diagnostics")
+        try:
+            from dependency_container import container
+            if FIXED_LEGAL_AVAILABLE:
+                diagnostics = get_legal_system_diagnostics_no_web(container)
+                
+                st.markdown(f"**Overall Status:** {diagnostics['overall_status']}")
+                
+                for component, status in diagnostics['components'].items():
+                    if status.get('available'):
+                        component_type = status.get('type', 'unknown')
+                        if component_type == 'real':
+                            st.success(f"✅ {component}: Fully operational")
+                        elif component_type == 'enhanced':
+                            st.success(f"✅ {component}: Enhanced version")
+                        elif component_type == 'limited':
+                            st.warning(f"⚠️ {component}: Limited functionality")
+                        else:
+                            st.info(f"ℹ️ {component}: {component_type}")
+                    else:
+                        st.error(f"❌ {component}: {status.get('error', 'Unavailable')}")
+                
+                if diagnostics.get('recommendations'):
+                    st.markdown("**Recommendations:**")
+                    for rec in diagnostics['recommendations']:
+                        st.markdown(f"• {rec}")
+            else:
+                st.warning("FIXED legal diagnostics not available")
+            
+            if st.button("Hide Diagnostics"):
+                st.session_state['show_legal_diagnostics'] = False
+                st.rerun()
+        except Exception as e:
+            st.error(f"Could not run diagnostics: {e}")
+
+
+

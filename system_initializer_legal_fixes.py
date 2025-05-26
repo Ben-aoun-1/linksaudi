@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# system_initializer_legal_fixes.py - FIXED Legal Component Factories and Utilities
+# system_initializer_legal_fixes.py - Legal Component Factories WITHOUT Web Search
 
 import os
 import logging
@@ -9,7 +9,7 @@ logger = logging.getLogger("market_intelligence")
 
 def create_legal_rag_engine_fixed(container):
     """
-    FIXED Factory for Legal RAG Engine with proper Weaviate integration
+    FIXED Factory for Legal RAG Engine with proper Weaviate integration (no web search)
     """
     try:
         # Try to import the FIXED legal RAG engine
@@ -56,7 +56,7 @@ def create_legal_rag_engine_fixed(container):
         except ImportError:
             logger.warning("Could not import embedding engine from rag_enhanced")
         
-        # Create the legal RAG engine
+        # Create the legal RAG engine (no web search)
         legal_rag = LegalRAGEngine(
             weaviate_client=weaviate_client,
             openai_client=openai_client,
@@ -88,96 +88,25 @@ def create_legal_rag_engine_fixed(container):
         logger.error(f"Legal RAG Engine initialization failed: {e}")
         return create_mock_legal_rag_engine()
 
-def create_legal_search_engine_fixed(container):
+def create_legal_chatbot_enhanced_no_web(container):
     """
-    Factory for Legal Search Engine with the missing research_topic method
-    """
-    try:
-        from legal_compliance import LegalSearchEngine
-        
-        web_search_engine = container.get('web_search')
-        legal_search = LegalSearchEngine(web_search_engine=web_search_engine)
-        
-        # FIXED: Add the missing research_topic method
-        def research_topic(self, query: str, context: str = "", market: str = "", top_n: int = 3) -> Dict[str, Any]:
-            """
-            FIXED: Add the missing research_topic method that was causing errors
-            """
-            try:
-                logger.info(f"Legal research topic query: {query}")
-                
-                # Use the existing search_legal_web_content method
-                result = self.search_legal_web_content(
-                    query=query,
-                    jurisdiction=market or "Saudi Arabia",
-                    max_results=top_n
-                )
-                
-                # Transform the result to match the expected format
-                if 'sources' in result and result['sources']:
-                    # Convert sources to data format expected by other components
-                    data = []
-                    for source in result['sources']:
-                        data.append({
-                            'title': source.get('title', 'Legal Document'),
-                            'url': source.get('url', ''),
-                            'summary': source.get('summary', ''),
-                            'retrieved_date': source.get('retrieved_date', '')
-                        })
-                    
-                    return {
-                        'query': query,
-                        'data': data,
-                        'summary': result.get('summary', ''),
-                        'key_findings': result.get('key_findings', []),
-                        'total_sources': len(data)
-                    }
-                else:
-                    # Return the original result if no sources transformation needed
-                    return result
-                    
-            except Exception as e:
-                logger.error(f"Error in legal research_topic: {e}")
-                return {
-                    'query': query,
-                    'data': [],
-                    'summary': f'Legal research error: {str(e)}',
-                    'key_findings': [],
-                    'error': str(e)
-                }
-        
-        # Bind the method to the instance
-        legal_search.research_topic = research_topic.__get__(legal_search, LegalSearchEngine)
-        
-        logger.info("Legal Search Engine initialized successfully with FIXED research_topic method")
-        return legal_search
-        
-    except Exception as e:
-        logger.error(f"Legal Search Engine initialization failed: {e}")
-        return create_mock_legal_search_engine()
-
-def create_legal_chatbot_enhanced(container):
-    """
-    Enhanced Legal Chatbot factory with better error handling and functionality
+    Enhanced Legal Chatbot factory WITHOUT web search functionality
     """
     try:
         from legal_compliance import LegalChatbot
         
-        # Get the legal RAG engine and search engine
+        # Get the legal RAG engine (no web search engine)
         legal_rag_engine = container.get('legal_rag_engine')
-        legal_search_engine = container.get('legal_search_engine')
         
-        # Create enhanced legal chatbot
+        # Create enhanced legal chatbot WITHOUT web search
         legal_chatbot = LegalChatbot(
-            legal_rag_engine=legal_rag_engine,
-            web_search_engine=legal_search_engine
+            legal_rag_engine=legal_rag_engine
         )
         
         # Add enhanced methods
         def get_system_status(self):
-            """Get the status of the legal compliance system"""
+            """Get the status of the legal compliance system (no web search)"""
             rag_status = "available" if self.legal_rag_engine else "unavailable"
-            search_status = "available" if self.web_search_engine else "unavailable"
             
             # Test RAG engine if available
             rag_test = None
@@ -193,14 +122,14 @@ def create_legal_chatbot_enhanced(container):
             
             return {
                 "legal_rag_engine": rag_status,
-                "legal_search_engine": search_status,
+                "web_search_enabled": False,  # Explicitly disabled
                 "rag_connection_test": rag_test,
                 "session_active": self.current_session is not None,
                 "total_queries": self.current_session["metadata"]["queries_count"] if self.current_session else 0
             }
         
         def test_legal_system(self):
-            """Test the legal system functionality"""
+            """Test the legal system functionality (database only)"""
             try:
                 test_response = self.ask_legal_question(
                     "What are the basic requirements for company formation in Saudi Arabia?",
@@ -217,7 +146,7 @@ def create_legal_chatbot_enhanced(container):
         legal_chatbot.get_system_status = get_system_status.__get__(legal_chatbot, LegalChatbot)
         legal_chatbot.test_legal_system = test_legal_system.__get__(legal_chatbot, LegalChatbot)
         
-        logger.info("Enhanced Legal Chatbot initialized successfully")
+        logger.info("Enhanced Legal Chatbot initialized successfully (no web search)")
         return legal_chatbot
         
     except Exception as e:
@@ -231,7 +160,7 @@ def create_mock_legal_rag_engine():
         def __init__(self):
             self.weaviate_client = None
             self.legal_class = "LegalDocument"
-            logger.info("Created mock Legal RAG Engine")
+            logger.info("Created mock Legal RAG Engine (no web search)")
         
         def search_legal_documents(self, query, limit=10, document_type=None, jurisdiction=None, practice_area=None):
             logger.warning("Using mock legal document search")
@@ -271,7 +200,7 @@ This matter falls under Saudi Arabian legal jurisdiction and requires compliance
 • Maintain compliance documentation
 • Regular review of legal requirements
 
-**Note:** This is a general guidance response. The legal compliance system is operating in limited mode. For detailed analysis, please ensure all legal dependencies are properly configured.
+**Note:** This is a general guidance response from our legal database. The legal compliance system is operating in limited mode. For detailed analysis, please ensure all legal dependencies are properly configured.
 
 **Legal Disclaimer:** This information is provided for general guidance only and does not constitute legal advice. For specific legal matters, please consult with a qualified attorney licensed to practice in Saudi Arabia.""",
                 "documents": self.search_legal_documents(query, context_limit or 5, document_type, jurisdiction, practice_area),
@@ -299,52 +228,6 @@ This matter falls under Saudi Arabian legal jurisdiction and requires compliance
     
     return MockLegalRAGEngine()
 
-def create_mock_legal_search_engine():
-    """Create a mock legal search engine when the real one fails"""
-    
-    class MockLegalSearchEngine:
-        def __init__(self):
-            pass
-        
-        def research_topic(self, query, context="", market="", top_n=3):
-            """FIXED: Add the missing research_topic method"""
-            return {
-                'query': query,
-                'data': [],
-                'summary': 'Legal web search is currently unavailable.',
-                'is_mock_data': True
-            }
-        
-        def search_legal_web_content(self, query, legal_category=None, jurisdiction="Saudi Arabia", max_results=5):
-            return {
-                'query': query,
-                'legal_category': legal_category,
-                'jurisdiction': jurisdiction,
-                'sources': [],
-                'summary': 'Legal web search is currently unavailable.',
-                'key_findings': [],
-                'is_mock_data': True
-            }
-        
-        def search_legal_precedents(self, case_type, jurisdiction="Saudi Arabia"):
-            return []
-        
-        def search_regulatory_updates(self, sector=None, days_back=90):
-            return []
-        
-        def search_compliance_requirements(self, business_type, jurisdiction="Saudi Arabia"):
-            return {
-                'business_type': business_type,
-                'jurisdiction': jurisdiction,
-                'requirements': [],
-                'licenses_needed': [],
-                'regulatory_bodies': [],
-                'sources': [],
-                'error': 'Legal search service unavailable'
-            }
-    
-    return MockLegalSearchEngine()
-
 def create_mock_legal_chatbot():
     """Create a mock legal chatbot when the real one fails"""
     
@@ -352,8 +235,7 @@ def create_mock_legal_chatbot():
         def __init__(self):
             self.current_session = None
             self.legal_rag_engine = None
-            self.web_search_engine = None
-            logger.info("Created mock Legal Chatbot")
+            logger.info("Created mock Legal Chatbot (no web search)")
         
         def start_new_session(self, user_id=None):
             import uuid
@@ -365,7 +247,7 @@ def create_mock_legal_chatbot():
             }
             return session_id
         
-        def ask_legal_question(self, question, document_type=None, jurisdiction=None, include_web_search=None):
+        def ask_legal_question(self, question, document_type=None, jurisdiction=None):
             if not self.current_session:
                 self.start_new_session()
                 
@@ -374,7 +256,7 @@ def create_mock_legal_chatbot():
             return {
                 "response": f"""I understand you're asking about: "{question}"
 
-**Current System Status:** The legal compliance system is operating in limited mode.
+**Current System Status:** The legal compliance system is operating in limited mode (database only, no web search).
 
 **General Legal Guidance:**
 For questions related to Saudi Arabian law and regulations, I recommend:
@@ -389,7 +271,6 @@ For questions related to Saudi Arabian law and regulations, I recommend:
 **Legal Disclaimer:** This information is provided for general guidance only and does not constitute legal advice. For specific legal matters, please consult with a qualified attorney licensed to practice in Saudi Arabia.""",
                 "session_id": self.current_session["session_id"],
                 "citations": [],
-                "web_sources": [],
                 "documents_consulted": 0,
                 "success": True,
                 "is_mock": True
@@ -421,40 +302,41 @@ For questions related to Saudi Arabian law and regulations, I recommend:
         def get_system_status(self):
             return {
                 "legal_rag_engine": "mock",
-                "legal_search_engine": "mock", 
+                "web_search_enabled": False,
                 "rag_connection_test": {"status": "mock", "message": "Mock legal system"},
                 "session_active": self.current_session is not None,
                 "total_queries": self.current_session["metadata"]["queries_count"] if self.current_session else 0
             }
         
         def test_legal_system(self):
-            return {"status": "mock", "message": "Mock legal system - limited functionality"}
+            return {"status": "mock", "message": "Mock legal system - limited functionality (no web search)"}
     
     return MockLegalChatbot()
 
-# Integration functions for existing system initializer
+# Integration functions for existing system initializer (no web search)
 
-def update_system_initializer_with_fixed_legal(system_initializer):
+def update_system_initializer_no_web(system_initializer):
     """
-    Update the existing system initializer with FIXED legal components
-    Call this function to register the improved legal factories
+    Update the existing system initializer with legal components (no web search)
+    Call this function to register the legal factories without web search
     """
-    # Register the FIXED legal component factories
+    # Register the legal component factories (no web search)
     system_initializer.register_component_factory('legal_rag_engine', create_legal_rag_engine_fixed)
-    system_initializer.register_component_factory('legal_search_engine', create_legal_search_engine_fixed)
-    system_initializer.register_component_factory('legal_chatbot', create_legal_chatbot_enhanced)
+    system_initializer.register_component_factory('legal_chatbot', create_legal_chatbot_enhanced_no_web)
+    # Removed: legal_search_engine factory
     
-    logger.info("System initializer updated with FIXED legal compliance components")
+    logger.info("System initializer updated with legal compliance components (no web search)")
 
-def get_legal_system_diagnostics(container) -> Dict[str, Any]:
+def get_legal_system_diagnostics_no_web(container) -> Dict[str, Any]:
     """
-    Get comprehensive diagnostics for the legal system
+    Get comprehensive diagnostics for the legal system (no web search)
     """
     diagnostics = {
         "timestamp": __import__('datetime').datetime.now().isoformat(),
         "components": {},
         "overall_status": "unknown",
-        "recommendations": []
+        "recommendations": [],
+        "web_search_enabled": False
     }
     
     # Test Legal RAG Engine
@@ -488,22 +370,7 @@ def get_legal_system_diagnostics(container) -> Dict[str, Any]:
             "error": "Component not found in container"
         }
     
-    # Test Legal Search Engine
-    legal_search = container.get('legal_search_engine')
-    if legal_search:
-        has_research_method = hasattr(legal_search, 'research_topic')
-        diagnostics["components"]["legal_search_engine"] = {
-            "available": True,
-            "type": "mock" if "Mock" in legal_search.__class__.__name__ else "real",
-            "has_research_topic_method": has_research_method
-        }
-    else:
-        diagnostics["components"]["legal_search_engine"] = {
-            "available": False,
-            "error": "Component not found in container"
-        }
-    
-    # Test Legal Chatbot
+    # Test Legal Chatbot (no web search)
     legal_chatbot = container.get('legal_chatbot')
     if legal_chatbot:
         if hasattr(legal_chatbot, 'get_system_status'):
@@ -512,7 +379,8 @@ def get_legal_system_diagnostics(container) -> Dict[str, Any]:
                 diagnostics["components"]["legal_chatbot"] = {
                     "available": True,
                     "type": "enhanced",
-                    "system_status": chatbot_status
+                    "system_status": chatbot_status,
+                    "web_search_enabled": False
                 }
             except Exception as e:
                 diagnostics["components"]["legal_chatbot"] = {
@@ -523,7 +391,8 @@ def get_legal_system_diagnostics(container) -> Dict[str, Any]:
         else:
             diagnostics["components"]["legal_chatbot"] = {
                 "available": True,
-                "type": "basic" if "Mock" not in legal_chatbot.__class__.__name__ else "mock"
+                "type": "basic" if "Mock" not in legal_chatbot.__class__.__name__ else "mock",
+                "web_search_enabled": False
             }
     else:
         diagnostics["components"]["legal_chatbot"] = {
@@ -531,9 +400,16 @@ def get_legal_system_diagnostics(container) -> Dict[str, Any]:
             "error": "Component not found in container"
         }
     
+    # Note: Legal Search Engine removed
+    diagnostics["components"]["legal_search_engine"] = {
+        "available": False,
+        "note": "Web search functionality has been disabled"
+    }
+    
     # Determine overall status
-    available_components = sum(1 for comp in diagnostics["components"].values() if comp.get("available", False))
-    total_components = len(diagnostics["components"])
+    available_components = sum(1 for comp in diagnostics["components"].values() 
+                             if comp.get("available", False) and comp.get("type") != "error")
+    total_components = len([k for k in diagnostics["components"].keys() if k != "legal_search_engine"])
     
     if available_components == total_components:
         # Check if components are real or mock
@@ -559,5 +435,7 @@ def get_legal_system_diagnostics(container) -> Dict[str, Any]:
     
     if diagnostics["components"].get("legal_rag_engine", {}).get("document_count", 0) == 0:
         diagnostics["recommendations"].append("Load legal documents into Weaviate database")
+    
+    diagnostics["recommendations"].append("Note: Web search functionality has been disabled for legal compliance")
     
     return diagnostics

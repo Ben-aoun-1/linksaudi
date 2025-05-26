@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# legal_compliance/__init__.py - FIXED Legal Compliance Module
+# legal_compliance/__init__.py - Legal Compliance Module WITHOUT Web Search
 
 import os
 import json
@@ -55,7 +55,7 @@ class LegalRAGEngine:
         self.max_tokens = 1500  # More tokens for detailed legal responses
         self.context_limit = 10  # More context for comprehensive legal analysis
         
-        logger.info("Legal RAG Engine initialized")
+        logger.info("Legal RAG Engine initialized (Web Search Removed)")
     
     def search_legal_documents(self, query: str, limit: int = 10, 
                               document_type: str = None, jurisdiction: str = None) -> List[Dict]:
@@ -77,11 +77,11 @@ class LegalRAGEngine:
                                include_citations: bool = True,
                                document_type: str = None, 
                                jurisdiction: str = None) -> Dict[str, Any]:
-        """Generate a legal response using RAG"""
+        """Generate a legal response using RAG (Database only - no web search)"""
         try:
             logger.info(f"Legal query: {query}")
             
-            # Search for relevant legal documents
+            # Search for relevant legal documents in database only
             context_limit = context_limit or self.context_limit
             legal_documents = self.search_legal_documents(
                 query, 
@@ -90,8 +90,8 @@ class LegalRAGEngine:
                 jurisdiction=jurisdiction
             )
             
-            # Generate basic response
-            response_text = self._generate_mock_legal_response(query, legal_documents)
+            # Generate response based on database documents only
+            response_text = self._generate_legal_response_from_db(query, legal_documents)
             
             # Extract citations if requested
             citations = []
@@ -108,7 +108,8 @@ class LegalRAGEngine:
                 "filters_applied": {
                     "document_type": document_type,
                     "jurisdiction": jurisdiction
-                }
+                },
+                "source": "legal_database_only"
             }
             
         except Exception as e:
@@ -152,9 +153,9 @@ class LegalRAGEngine:
         ]
         return mock_docs[:limit]
     
-    def _generate_mock_legal_response(self, query: str, documents: List[Dict]) -> str:
-        """Generate a mock legal response"""
-        return f"""Based on Saudi Arabian legal framework, regarding your question about "{query}":
+    def _generate_legal_response_from_db(self, query: str, documents: List[Dict]) -> str:
+        """Generate a legal response based only on database documents"""
+        return f"""Based on Saudi Arabian legal framework in our database, regarding your question about "{query}":
 
 **Legal Analysis:**
 The relevant legal provisions indicate that this matter is governed by established Saudi Arabian law. Key considerations include:
@@ -170,6 +171,8 @@ The applicable legal framework provides clear guidance on procedures and require
 1. Ensure full compliance with applicable regulations
 2. Consult with qualified legal counsel for specific implementation
 3. Review current legal requirements and any recent updates
+
+**Note:** This analysis is based on legal documents in our database only.
 
 **Legal Disclaimer:** This information is provided for general guidance only and does not constitute legal advice. For specific legal matters, please consult with a qualified attorney licensed to practice in Saudi Arabia."""
     
@@ -207,149 +210,11 @@ The applicable legal framework provides clear guidance on procedures and require
         """Get available jurisdictions"""
         return ["Saudi Arabia", "GCC", "International", "UAE", "Qatar", "Kuwait", "Bahrain", "Oman"]
 
-class LegalSearchEngine:
-    """Legal search engine for web-based legal research"""
-    
-    def __init__(self, web_search_engine=None):
-        self.web_search_engine = web_search_engine
-        logger.info("Legal Search Engine initialized")
-    
-    def research_topic(self, query: str, context: str = "", market: str = "", top_n: int = 3) -> Dict[str, Any]:
-        """
-        FIXED: Add the missing research_topic method that was causing the error
-        This method was expected by the legal chatbot but was missing from the original implementation
-        """
-        try:
-            logger.info(f"Legal research topic query: {query}")
-            
-            # Use the existing search_legal_web_content method
-            result = self.search_legal_web_content(
-                query=query,
-                jurisdiction=market or "Saudi Arabia",
-                max_results=top_n
-            )
-            
-            # Transform the result to match the expected format
-            if 'sources' in result and result['sources']:
-                # Convert sources to data format expected by other components
-                data = []
-                for source in result['sources']:
-                    data.append({
-                        'title': source.get('title', 'Legal Document'),
-                        'url': source.get('url', ''),
-                        'summary': source.get('summary', ''),
-                        'retrieved_date': source.get('retrieved_date', '')
-                    })
-                
-                return {
-                    'query': query,
-                    'data': data,
-                    'summary': result.get('summary', ''),
-                    'key_findings': result.get('key_findings', []),
-                    'total_sources': len(data)
-                }
-            else:
-                # Return the original result if no sources transformation needed
-                return result
-                
-        except Exception as e:
-            logger.error(f"Error in legal research_topic: {e}")
-            return {
-                'query': query,
-                'data': [],
-                'summary': f'Legal research error: {str(e)}',
-                'key_findings': [],
-                'error': str(e)
-            }
-    
-    def search_legal_web_content(self, query: str, legal_category: str = None, 
-                                jurisdiction: str = "Saudi Arabia", max_results: int = 5) -> Dict[str, Any]:
-        """Search for legal content on the web"""
-        try:
-            if self.web_search_engine:
-                # Use real web search if available
-                results = self.web_search_engine.research_topic(
-                    query=f"{query} {jurisdiction} law regulation",
-                    context="legal compliance",
-                    market=jurisdiction,
-                    top_n=max_results
-                )
-                return results
-            else:
-                # Return mock results
-                return {
-                    'query': query,
-                    'legal_category': legal_category,
-                    'jurisdiction': jurisdiction,
-                    'sources': [
-                        {
-                            'title': f"Legal Update: {query}",
-                            'url': 'https://example-legal-source.com',
-                            'summary': f"Recent legal developments regarding {query} in {jurisdiction}",
-                            'retrieved_date': datetime.now().isoformat()
-                        }
-                    ],
-                    'summary': f'Recent legal developments regarding {query} in {jurisdiction}',
-                    'key_findings': [f"Key legal principle related to {query}"],
-                    'is_mock_data': True
-                }
-        except Exception as e:
-            logger.error(f"Error in legal web search: {e}")
-            return {'error': str(e)}
-    
-    def search_legal_precedents(self, case_type: str, jurisdiction: str = "Saudi Arabia") -> List[Dict]:
-        """Search for legal precedents"""
-        return [
-            {
-                'case_title': f"Legal Precedent for {case_type}",
-                'case_type': case_type,
-                'jurisdiction': jurisdiction,
-                'summary': f"Important precedent case regarding {case_type} in {jurisdiction}",
-                'source_url': 'https://example-legal-database.com'
-            }
-        ]
-    
-    def search_regulatory_updates(self, sector: str = None, days_back: int = 90) -> List[Dict]:
-        """Search for recent regulatory updates"""
-        return [
-            {
-                'title': f"Recent Regulatory Update - {sector or 'General'}",
-                'sector': sector,
-                'update_date': datetime.now().isoformat(),
-                'summary': f"Recent regulatory changes affecting {sector or 'various sectors'}",
-                'source': 'Saudi Arabian Regulatory Authority'
-            }
-        ]
-    
-    def search_compliance_requirements(self, business_type: str, jurisdiction: str = "Saudi Arabia") -> Dict[str, Any]:
-        """Search for compliance requirements"""
-        return {
-            'business_type': business_type,
-            'jurisdiction': jurisdiction,
-            'requirements': [
-                f"Commercial registration for {business_type}",
-                f"Regulatory compliance for {business_type} operations",
-                "Tax registration and compliance"
-            ],
-            'licenses_needed': [
-                f"Primary business license for {business_type}",
-                "Municipal permits",
-                "Industry-specific certifications"
-            ],
-            'regulatory_bodies': [
-                "Ministry of Commerce and Investment",
-                "Saudi Arabian General Investment Authority",
-                "Relevant sector regulatory body"
-            ],
-            'sources': ['Official government portals', 'Regulatory publications']
-        }
-
 class LegalChatbot:
-    """Legal compliance chatbot with conversation management - FIXED VERSION"""
+    """Legal compliance chatbot with conversation management - NO WEB SEARCH VERSION"""
     
-    def __init__(self, legal_rag_engine=None, web_search_engine=None):
+    def __init__(self, legal_rag_engine=None):
         self.legal_rag_engine = legal_rag_engine
-        self.web_search_engine = web_search_engine
         self.conversations_dir = "data/legal_conversations"
         self.current_session = None
         self.session_history = []
@@ -359,10 +224,9 @@ class LegalChatbot:
         
         # Legal chatbot configuration
         self.max_history_length = 20  # Keep last 20 exchanges
-        self.enable_web_enhancement = True
         self.disclaimer_shown = False
         
-        logger.info("FIXED Legal Chatbot initialized")
+        logger.info("Legal Chatbot initialized (Web Search Disabled)")
     
     def start_new_session(self, user_id: str = None) -> str:
         """Start a new legal consultation session"""
@@ -392,8 +256,8 @@ class LegalChatbot:
         return session_id
     
     def ask_legal_question(self, question: str, document_type: str = None, 
-                          jurisdiction: str = None, include_web_search: bool = None) -> Dict[str, Any]:
-        """Ask a legal question and get a response - FIXED VERSION"""
+                          jurisdiction: str = None) -> Dict[str, Any]:
+        """Ask a legal question and get a response - DATABASE ONLY VERSION"""
         try:
             if not self.current_session:
                 self.start_new_session()
@@ -413,7 +277,7 @@ class LegalChatbot:
             }
             self.current_session["messages"].append(user_message)
             
-            # Generate response using legal RAG
+            # Generate response using legal RAG (database only)
             base_response = ""
             citations = []
             documents_used = []
@@ -432,45 +296,20 @@ class LegalChatbot:
                     documents_used = rag_response.get("documents", [])
                 except Exception as e:
                     logger.error(f"Error with legal RAG: {e}")
-                    base_response = f"I can provide general legal guidance on: {question}\n\nThis is a basic response. For full legal analysis, please ensure all dependencies are properly configured."
+                    base_response = f"I can provide general legal guidance on: {question}\n\nThis is a basic response from our legal database. For full legal analysis, please ensure all dependencies are properly configured."
                     citations = []
                     documents_used = []
             else:
-                base_response = f"Legal guidance on: {question}\n\nThis is a basic legal response. Please ensure the legal RAG engine is properly configured for detailed analysis."
+                base_response = f"Legal guidance on: {question}\n\nThis is a basic legal response from our database. Please ensure the legal RAG engine is properly configured for detailed analysis."
                 citations = []
                 documents_used = []
-            
-            # Enhance with web search if requested
-            web_sources = []
-            if (include_web_search or self.enable_web_enhancement) and self.web_search_engine:
-                try:
-                    web_results = self.web_search_engine.research_topic(
-                        query=f"{question} Saudi Arabia law",
-                        context="legal compliance regulation",
-                        market="Saudi Arabia",
-                        top_n=2
-                    )
-                    
-                    if "data" in web_results and web_results["data"]:
-                        web_sources = web_results["data"]
-                        
-                        # Add web information to response
-                        web_content = "\n\n**Latest Legal Developments:**\n"
-                        for source in web_sources[:1]:  # Limit to 1 web source for legal accuracy
-                            web_content += f"• Recent Update: {source.get('title', 'Legal Update')}\n"
-                            web_content += f"  Source: {source.get('url', 'Unknown')}\n"
-                        
-                        base_response += web_content
-                
-                except Exception as e:
-                    logger.warning(f"Web search enhancement failed: {e}")
             
             # Add legal disclaimer
             if not self.disclaimer_shown:
                 base_response += "\n\n" + self._get_legal_disclaimer()
                 self.disclaimer_shown = True
             
-            # FIXED: Safely extract document metadata
+            # Safely extract document metadata
             document_types = []
             jurisdictions = []
             
@@ -494,21 +333,19 @@ class LegalChatbot:
                 "metadata": {
                     "documents_consulted": len(documents_used),
                     "citations_provided": len(citations),
-                    "web_sources_used": len(web_sources),
                     "document_types": document_types,
                     "jurisdictions": jurisdictions
                 },
-                "citations": citations,
-                "web_sources": web_sources
+                "citations": citations
             }
             
             # Add to session
             self.current_session["messages"].append(assistant_response)
             
-            # FIXED: Update session metadata safely
+            # Update session metadata safely
             self.current_session["metadata"]["queries_count"] += 1
             
-            # FIXED: Ensure session metadata fields are sets before updating
+            # Ensure session metadata fields are sets before updating
             if not isinstance(self.current_session["metadata"]["document_types_consulted"], set):
                 self.current_session["metadata"]["document_types_consulted"] = set()
             
@@ -534,7 +371,6 @@ class LegalChatbot:
                 "session_id": self.current_session["session_id"],
                 "message_id": len(self.current_session["messages"]) - 1,
                 "citations": citations,
-                "web_sources": web_sources,
                 "documents_consulted": len(documents_used),
                 "success": True
             }
@@ -731,13 +567,13 @@ class LegalChatbot:
             return {"error": f"Failed to export report: {str(e)}"}
     
     def load_session(self, session_id: str) -> bool:
-        """Load a previous session - FIXED VERSION"""
+        """Load a previous session"""
         try:
             filename = os.path.join(self.conversations_dir, f"legal_session_{session_id}.json")
             session_data = load_json_with_encoding(filename)
             
             if session_data:
-                # FIXED: Safely convert lists back to sets when loading
+                # Safely convert lists back to sets when loading
                 metadata = session_data.get("metadata", {})
                 
                 # Convert document_types_consulted to set
@@ -766,7 +602,7 @@ class LegalChatbot:
             return False
     
     def _save_current_session(self) -> bool:
-        """Save the current session to disk - FIXED VERSION"""
+        """Save the current session to disk"""
         if not self.current_session:
             return False
         
@@ -775,7 +611,7 @@ class LegalChatbot:
             session_copy = self.current_session.copy()
             session_copy["metadata"] = self.current_session["metadata"].copy()
             
-            # FIXED: Safely handle set to list conversion
+            # Safely handle set to list conversion
             doc_types = session_copy["metadata"]["document_types_consulted"]
             if isinstance(doc_types, set):
                 session_copy["metadata"]["document_types_consulted"] = list(doc_types)
@@ -803,7 +639,7 @@ class LegalChatbot:
         """Get the welcome message for new sessions"""
         return """Welcome to the Legal Compliance Assistant! 
 
-I'm here to help you with legal questions related to Saudi Arabian law and regulations. I can assist with:
+I'm here to help you with legal questions related to Saudi Arabian law and regulations based on our legal document database. I can assist with:
 
 • Corporate law and business regulations
 • Contract law and commercial agreements  
@@ -812,14 +648,14 @@ I'm here to help you with legal questions related to Saudi Arabian law and regul
 • Commercial licensing and permits
 • International trade regulations
 
-Please note that I provide general legal information based on available legal documents and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney.
+Please note that I provide general legal information based on available legal documents in our database and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney.
 
 How can I assist you with your legal question today?"""
     
     def _get_legal_disclaimer(self) -> str:
         """Get the legal disclaimer text"""
         return """
-**Legal Disclaimer:** This information is provided for general guidance only and does not constitute legal advice. Laws and regulations may change, and specific circumstances may affect how laws apply to your situation. For specific legal matters, please consult with a qualified attorney licensed to practice in the relevant jurisdiction."""
+**Legal Disclaimer:** This information is provided for general guidance only based on our legal document database and does not constitute legal advice. Laws and regulations may change, and specific circumstances may affect how laws apply to your situation. For specific legal matters, please consult with a qualified attorney licensed to practice in the relevant jurisdiction."""
     
     def _calculate_session_duration(self) -> float:
         """Calculate session duration in minutes"""
@@ -831,5 +667,5 @@ How can I assist you with your legal question today?"""
         duration = (current_time - start_time).total_seconds() / 60
         return round(duration, 2)
 
-# Export classes for import
-__all__ = ['LegalRAGEngine', 'LegalSearchEngine', 'LegalChatbot']
+# Export classes for import (Web Search classes removed)
+__all__ = ['LegalRAGEngine', 'LegalChatbot']
