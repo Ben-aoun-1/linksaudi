@@ -47,13 +47,8 @@ except ImportError as e:
 
 try:
     from legal_compliance.legal_rag_engine import LegalRAGEngine as FixedLegalRAGEngine
-    from system_initializer_legal_fixes import (
-        create_legal_rag_engine_fixed,
-        create_legal_chatbot_enhanced_no_web,
-        get_legal_system_diagnostics_no_web,
-        update_system_initializer_no_web
-    )
-    FIXED_LEGAL_AVAILABLE = True
+    
+    
     print("✅ FIXED Legal RAG components imported successfully")
 except ImportError as e:
     FIXED_LEGAL_AVAILABLE = False
@@ -436,27 +431,21 @@ def _handle_initialization_failure():
     return False
 
 def initialize_legal_compliance():
+    """Initialize legal compliance system - SIMPLIFIED VERSION"""
     try:
-        if not LEGAL_COMPLIANCE_AVAILABLE and not FIXED_LEGAL_AVAILABLE:
+        if not LEGAL_COMPLIANCE_AVAILABLE:
             st.session_state['legal_system_available'] = False
             st.session_state['legal_system_type'] = 'unavailable'
             return False
         
         from dependency_container import container
         
-        if FIXED_LEGAL_AVAILABLE:
-            try:
-                from system_initializer import system_initializer
-                update_system_initializer_no_web(system_initializer)
-                logger.info("System initializer updated with legal components (no web search)")
-            except Exception as e:
-                logger.warning(f"Could not update system initializer: {e}")
-        
+        # Check if legal components are available in container
         if container.has('legal_rag_engine') and container.has('legal_chatbot'):
             st.session_state['legal_rag_engine'] = container.get('legal_rag_engine')
             st.session_state['legal_chatbot'] = container.get('legal_chatbot')
             
-            return _test_legal_system_no_web()
+            return _test_legal_system_simple()
         else:
             st.session_state['legal_system_available'] = False
             st.session_state['legal_system_type'] = 'unavailable'
@@ -469,40 +458,37 @@ def initialize_legal_compliance():
         st.session_state['legal_system_type'] = 'unavailable'
         return False
 
-def _test_legal_system_no_web():
-    if FIXED_LEGAL_AVAILABLE and hasattr(st.session_state['legal_chatbot'], 'get_system_status'):
-        try:
+def _test_legal_system_simple():
+    """Simplified legal system test"""
+    try:
+        if hasattr(st.session_state['legal_chatbot'], 'get_system_status'):
             system_status = st.session_state['legal_chatbot'].get_system_status()
-            logger.info(f"Legal system status (no web): {system_status}")
+            logger.info(f"Legal system status: {system_status}")
             
             rag_test = system_status.get('rag_connection_test', {})
             if rag_test.get('status') == 'success':
                 st.session_state['legal_system_available'] = True
                 st.session_state['legal_system_type'] = 'full_rag'
                 st.session_state['legal_document_count'] = rag_test.get('total_documents', 0)
-                logger.info("✅ Legal RAG system with Weaviate available (database only)")
-            elif rag_test.get('status') == 'mock':
+                logger.info("Legal RAG system with Weaviate available (database only)")
+            else:
                 st.session_state['legal_system_available'] = True
                 st.session_state['legal_system_type'] = 'basic'
                 st.session_state['legal_document_count'] = 0
-                logger.info("🔵 Basic legal system available (mock, database only)")
-            else:
-                st.session_state['legal_system_available'] = True
-                st.session_state['legal_system_type'] = 'limited'
-                st.session_state['legal_document_count'] = 0
-                logger.info("⚠️ Limited legal system available (database only)")
-        except Exception as e:
-            logger.error(f"Error testing legal system: {e}")
+                logger.info("Basic legal system available (database only)")
+        else:
             st.session_state['legal_system_available'] = True
             st.session_state['legal_system_type'] = 'basic'
             st.session_state['legal_document_count'] = 0
-    else:
+    except Exception as e:
+        logger.error(f"Error testing legal system: {e}")
         st.session_state['legal_system_available'] = True
         st.session_state['legal_system_type'] = 'basic'
         st.session_state['legal_document_count'] = 0
-        logger.info("Basic legal compliance system available (database only)")
     
     return True
+
+
 
 def display_status_indicator():
     status = st.session_state['system_status']
@@ -885,12 +871,12 @@ def legal_compliance_interface():
     st.markdown('<h2 class="sub-header">Legal Compliance Assistant</h2>', unsafe_allow_html=True)
     
     if not st.session_state['legal_system_available']:
-        _display_legal_system_unavailable()
+        
         return
     
     _display_legal_system_status_no_web()
     _display_legal_system_metrics()
-    _display_legal_diagnostics_panel()
+    
     _display_legal_disclaimer()
     _display_legal_session_management()
     _display_legal_chat_interface_no_web()
@@ -1475,51 +1461,6 @@ def _display_legal_system_metrics():
         else:
             st.metric("Legal Documents", "N/A")
 
-def _display_legal_diagnostics_panel():
-    with st.expander("🔧 System Diagnostics", expanded=False):
-        if st.button("Run Full Legal System Diagnostics"):
-            try:
-                from dependency_container import container
-                if FIXED_LEGAL_AVAILABLE:
-                    diagnostics = get_legal_system_diagnostics_no_web(container)
-                    
-                    st.markdown("### Legal System Diagnostics Report")
-                    st.markdown(f"**Overall Status:** `{diagnostics['overall_status']}`")
-                    st.markdown(f"**Report Generated:** {diagnostics['timestamp']}")
-                    st.markdown(f"**Web Search Enabled:** {diagnostics['web_search_enabled']}")
-                    
-                    st.markdown("#### Component Status")
-                    for component, status in diagnostics['components'].items():
-                        with st.container():
-                            if status.get('available'):
-                                component_type = status.get('type', 'unknown')
-                                if component_type == 'real':
-                                    st.success(f"✅ **{component}**: Fully operational")
-                                elif component_type == 'enhanced':
-                                    st.success(f"✅ **{component}**: Enhanced version")
-                                elif component_type == 'limited':
-                                    st.warning(f"⚠️ **{component}**: Limited functionality")
-                                elif component_type == 'mock':
-                                    st.info(f"🔵 **{component}**: Mock implementation")
-                                else:
-                                    st.info(f"ℹ️ **{component}**: {component_type}")
-                                
-                                if 'connection_test' in status:
-                                    test_result = status['connection_test']
-                                    if test_result.get('total_documents', 0) > 0:
-                                        st.markdown(f"   📄 Documents: {test_result['total_documents']:,}")
-                                    st.markdown(f"   🔗 Connection: {test_result.get('message', 'OK')}")
-                            else:
-                                st.error(f"❌ **{component}**: {status.get('error', 'Unavailable')}")
-                    
-                    if diagnostics.get('recommendations'):
-                        st.markdown("#### Recommendations")
-                        for rec in diagnostics['recommendations']:
-                            st.markdown(f"💡 {rec}")
-                else:
-                    st.warning("FIXED legal diagnostics not available")
-            except Exception as e:
-                st.error(f"Could not run diagnostics: {e}")
 
 def _display_legal_disclaimer():
     st.markdown("""
@@ -1615,41 +1556,7 @@ if __name__ == "__main__":
             st.session_state['show_legal_diagnostics'] = True
             st.rerun()
     
-    if st.session_state.get('show_legal_diagnostics', False):
-        st.markdown("### Legal System Diagnostics")
-        try:
-            from dependency_container import container
-            if FIXED_LEGAL_AVAILABLE:
-                diagnostics = get_legal_system_diagnostics_no_web(container)
-                
-                st.markdown(f"**Overall Status:** {diagnostics['overall_status']}")
-                
-                for component, status in diagnostics['components'].items():
-                    if status.get('available'):
-                        component_type = status.get('type', 'unknown')
-                        if component_type == 'real':
-                            st.success(f"✅ {component}: Fully operational")
-                        elif component_type == 'enhanced':
-                            st.success(f"✅ {component}: Enhanced version")
-                        elif component_type == 'limited':
-                            st.warning(f"⚠️ {component}: Limited functionality")
-                        else:
-                            st.info(f"ℹ️ {component}: {component_type}")
-                    else:
-                        st.error(f"❌ {component}: {status.get('error', 'Unavailable')}")
-                
-                if diagnostics.get('recommendations'):
-                    st.markdown("**Recommendations:**")
-                    for rec in diagnostics['recommendations']:
-                        st.markdown(f"• {rec}")
-            else:
-                st.warning("FIXED legal diagnostics not available")
-            
-            if st.button("Hide Diagnostics"):
-                st.session_state['show_legal_diagnostics'] = False
-                st.rerun()
-        except Exception as e:
-            st.error(f"Could not run diagnostics: {e}")
+    
 
 
 

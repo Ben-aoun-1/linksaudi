@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# legal_compliance/__init__.py - Legal Compliance Module WITHOUT Web Search
+# legal_compliance/__init__.py - FIXED Legal Compliance Module with all required exports
 
 import os
 import json
@@ -55,7 +55,7 @@ class LegalRAGEngine:
         self.max_tokens = 1500  # More tokens for detailed legal responses
         self.context_limit = 10  # More context for comprehensive legal analysis
         
-        logger.info("Legal RAG Engine initialized (Web Search Removed)")
+        logger.info("Legal RAG Engine initialized")
     
     def search_legal_documents(self, query: str, limit: int = 10, 
                               document_type: str = None, jurisdiction: str = None) -> List[Dict]:
@@ -77,7 +77,7 @@ class LegalRAGEngine:
                                include_citations: bool = True,
                                document_type: str = None, 
                                jurisdiction: str = None) -> Dict[str, Any]:
-        """Generate a legal response using RAG (Database only - no web search)"""
+        """Generate a legal response using RAG (Database only)"""
         try:
             logger.info(f"Legal query: {query}")
             
@@ -210,11 +210,15 @@ The applicable legal framework provides clear guidance on procedures and require
         """Get available jurisdictions"""
         return ["Saudi Arabia", "GCC", "International", "UAE", "Qatar", "Kuwait", "Bahrain", "Oman"]
 
+# LegalSearchEngine deliberately removed for compliance reasons
+# Web search functionality has been disabled for legal queries
+
 class LegalChatbot:
-    """Legal compliance chatbot with conversation management - NO WEB SEARCH VERSION"""
+    """Legal compliance chatbot with conversation management"""
     
-    def __init__(self, legal_rag_engine=None):
+    def __init__(self, legal_rag_engine=None, web_search_engine=None):
         self.legal_rag_engine = legal_rag_engine
+        self.web_search_engine = None  # Explicitly disabled
         self.conversations_dir = "data/legal_conversations"
         self.current_session = None
         self.session_history = []
@@ -296,11 +300,11 @@ class LegalChatbot:
                     documents_used = rag_response.get("documents", [])
                 except Exception as e:
                     logger.error(f"Error with legal RAG: {e}")
-                    base_response = f"I can provide general legal guidance on: {question}\n\nThis is a basic response from our legal database. For full legal analysis, please ensure all dependencies are properly configured."
+                    base_response = f"I can provide general legal guidance on: {question}\n\nThis is a basic response from our legal database."
                     citations = []
                     documents_used = []
             else:
-                base_response = f"Legal guidance on: {question}\n\nThis is a basic legal response from our database. Please ensure the legal RAG engine is properly configured for detailed analysis."
+                base_response = f"Legal guidance on: {question}\n\nThis is a basic legal response from our database."
                 citations = []
                 documents_used = []
             
@@ -324,6 +328,20 @@ class LegalChatbot:
                         if jurisdiction_val and jurisdiction_val not in jurisdictions:
                             jurisdictions.append(jurisdiction_val)
             
+            # Update session metadata safely
+            self.current_session["metadata"]["queries_count"] += 1
+            
+            # Ensure session metadata fields are sets before updating
+            if not isinstance(self.current_session["metadata"]["document_types_consulted"], set):
+                self.current_session["metadata"]["document_types_consulted"] = set()
+            
+            if not isinstance(self.current_session["metadata"]["jurisdictions_consulted"], set):
+                self.current_session["metadata"]["jurisdictions_consulted"] = set()
+            
+            # Update with new values
+            self.current_session["metadata"]["document_types_consulted"].update(document_types)
+            self.current_session["metadata"]["jurisdictions_consulted"].update(jurisdictions)
+            
             # Create assistant response
             assistant_response = {
                 "role": "assistant",
@@ -341,20 +359,6 @@ class LegalChatbot:
             
             # Add to session
             self.current_session["messages"].append(assistant_response)
-            
-            # Update session metadata safely
-            self.current_session["metadata"]["queries_count"] += 1
-            
-            # Ensure session metadata fields are sets before updating
-            if not isinstance(self.current_session["metadata"]["document_types_consulted"], set):
-                self.current_session["metadata"]["document_types_consulted"] = set()
-            
-            if not isinstance(self.current_session["metadata"]["jurisdictions_consulted"], set):
-                self.current_session["metadata"]["jurisdictions_consulted"] = set()
-            
-            # Update with new values
-            self.current_session["metadata"]["document_types_consulted"].update(document_types)
-            self.current_session["metadata"]["jurisdictions_consulted"].update(jurisdictions)
             
             # Keep session history manageable
             if len(self.current_session["messages"]) > self.max_history_length:
@@ -667,5 +671,5 @@ How can I assist you with your legal question today?"""
         duration = (current_time - start_time).total_seconds() / 60
         return round(duration, 2)
 
-# Export classes for import (Web Search classes removed)
+# Export classes for import - LegalSearchEngine removed for compliance
 __all__ = ['LegalRAGEngine', 'LegalChatbot']
