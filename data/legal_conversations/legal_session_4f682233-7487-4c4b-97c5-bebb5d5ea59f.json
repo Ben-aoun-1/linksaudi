@@ -1,0 +1,1426 @@
+{
+  "session_id": "4f682233-7487-4c4b-97c5-bebb5d5ea59f",
+  "user_id": "test_user",
+  "start_time": "2025-05-27T08:58:29.408789",
+  "messages": [
+    {
+      "role": "assistant",
+      "content": "Welcome to the Legal Compliance Assistant! \n\nI'm here to help you with legal questions related to Saudi Arabian law and regulations based on our legal document database using basic search functionality. I can assist with:\n\n• Corporate law and business regulations\n• Contract law and commercial agreements  \n• Employment law and labor regulations\n• Regulatory compliance requirements\n• Commercial licensing and permits\n• International trade regulations\n\nPlease note that I provide general legal information based on available legal documents in our database and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney.\n\n*System Note: Using basic search mode for improved stability and reliability.*\n\nHow can I assist you with your legal question today?",
+      "timestamp": "2025-05-27T08:58:29.408789",
+      "message_type": "welcome"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'What are the requirements for establishing a company in Saudi Arabia?', here are the key findings:\n\n**Document Types Consulted:** Regulation, Contract\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 11.5): (5/8R) The Ministry shall work under the provisions of the relevant laws to regulate the manufacture and handling medicines and the like such as other biological, herbal, and health preparations, and monitor their use through the following: - Set a registration system that takes into account the eff...\n• From 002 (Relevance: 11.5): (7/4R ) The Ministry shall set the appropriate and effective mechanism to monitor the performance of the directorates, evaluawtwew i.tmso ohu.gtocvo.sames9, 3o7n a rSeaugduiMlaOr HbaswMiswO, waH.mnPodorh tha.gloolvd.s aStahuedmiM93 Oa7HccoSuSanuaudtdaiMib_OMleHo htheMreOfHoPr.o rtal SaudiMOH Saudi_M...\n• From 002 (Relevance: 10.5): Healthcare Provision: Ensuring the existence of Healthcare without necessarily implying that it is provided or financed directly by the State, except as stipulated in the Articles of this Law 7 Minister: Minister of Health 8 Ministry: Ministry of Health 9 Council: Saudi Health Council (Council of He...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*\n\n\n**Legal Disclaimer:** This information is provided for general guidance only based on our legal document database (using basic search) and does not constitute legal advice. Laws and regulations may change, and specific circumstances may affect how laws apply to your situation. For specific legal matters, please consult with a qualified attorney licensed to practice in the relevant jurisdiction.",
+      "timestamp": "2025-05-27T08:58:33.327344",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Contract",
+          "Regulation",
+          "Royal Decree"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 11.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 11.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 10.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 10.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 10.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Royal Decree",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 9.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Formation & Registration",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 9.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 9.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 9.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 8.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "What are the employment law obligations for employers?",
+      "timestamp": "2025-05-27T08:58:33.347755",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'What are the employment law obligations for employers?', here are the key findings:\n\n**Document Types Consulted:** Regulation, Contract\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 5.0): (5/8R) The Ministry shall work under the provisions of the relevant laws to regulate the manufacture and handling medicines and the like such as other biological, herbal, and health preparations, and monitor their use through the following: - Set a registration system that takes into account the eff...\n• From 002 (Relevance: 5.0): (Article 6) Law: The state shall endeavour, through the Ministry, to provide an integrated network of Healthcare services covering all regions of the Kingdom, including primary, secondary, and specialized Healthcare levels The Ministry, in cooperation with the regions’ councils, shall determine the ...\n• From 002 (Relevance: 5.0): (7/4R ) The Ministry shall set the appropriate and effective mechanism to monitor the performance of the directorates, evaluawtwew i.tmso ohu.gtocvo.sames9, 3o7n a rSeaugduiMlaOr HbaswMiswO, waH.mnPodorh tha.gloolvd.s aStahuedmiM93 Oa7HccoSuSanuaudtdaiMib_OMleHo htheMreOfHoPr.o rtal SaudiMOH Saudi_M...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*",
+      "timestamp": "2025-05-27T08:58:37.426160",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Contract",
+          "Regulation",
+          "Royal Decree"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Royal Decree",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Formation & Registration",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "How do I obtain a commercial license in Saudi Arabia?",
+      "timestamp": "2025-05-27T08:58:37.436725",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'How do I obtain a commercial license in Saudi Arabia?', here are the key findings:\n\n**Document Types Consulted:** Contract, Regulation\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 10.5): - Mental health, as the Ministry shall assure the right to treatment and rehabilitation for mental patients in its health facilities in a manner that preserves their dignity and rights and rehabilitates them to practice their social and personal affairs Also, the Ministry shall set the procedures an...\n• From 004 (Relevance: 10.5): [Page 1] INTERNATIONAL HEALTH REGULATIONS INTERNATIONAL HEALTH REGULATIONS ( 2005 ) SECOND EDITION (2005) SECOND EDITION [Page 2] INTERNATIONAL HEALTH REGULATIONS (2005) SECOND EDITION [Page 4] INTERNATIONAL HEALTH REGULATIONS (2005) SECOND EDITION [Page 5] WHO Library Cataloguing-in-Publication Dat...\n• From 002 (Relevance: 9.5): (5/3R) The Ministry shall conduct a periodical review to ensure the availability of an adequate number of beds and efficient distribution of hospitals and health centers in different regions In particular, it shall: (5/3-1R) Verify the fair and balanced distribution of the numbers of health centers,...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*",
+      "timestamp": "2025-05-27T08:58:41.253025",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Regulation",
+          "Contract",
+          "General Legal Document"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 10.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 10.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 9.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 9.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 8.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 8.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 8.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 7.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "General Legal Document",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "General Legal Practice",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 7.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "General Legal Practice",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 7.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "What are the corporate governance requirements for Saudi companies?",
+      "timestamp": "2025-05-27T08:58:41.277702",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'What are the corporate governance requirements for Saudi companies?', here are the key findings:\n\n**Document Types Consulted:** Regulation\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 7.5): (7/4R ) The Ministry shall set the appropriate and effective mechanism to monitor the performance of the directorates, evaluawtwew i.tmso ohu.gtocvo.sames9, 3o7n a rSeaugduiMlaOr HbaswMiswO, waH.mnPodorh tha.gloolvd.s aStahuedmiM93 Oa7HccoSuSanuaudtdaiMib_OMleHo htheMreOfHoPr.o rtal SaudiMOH Saudi_M...\n• From 002 (Relevance: 6.5): Healthcare Provision: Ensuring the existence of Healthcare without necessarily implying that it is provided or financed directly by the State, except as stipulated in the Articles of this Law 7 Minister: Minister of Health 8 Ministry: Ministry of Health 9 Council: Saudi Health Council (Council of He...\n• From 002 (Relevance: 6.5): - Mental health, as the Ministry shall assure the right to treatment and rehabilitation for mental patients in its health facilities in a manner that preserves their dignity and rights and rehabilitates them to practice their social and personal affairs Also, the Ministry shall set the procedures an...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*",
+      "timestamp": "2025-05-27T08:58:45.655792",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Regulation",
+          "Contract",
+          "Royal Decree"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 7.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Royal Decree",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Formation & Registration",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "What are the labor law compliance requirements?",
+      "timestamp": "2025-05-27T08:58:45.662273",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'What are the labor law compliance requirements?', here are the key findings:\n\n**Document Types Consulted:** Regulation, Contract\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 4.0): (5/8R) The Ministry shall work under the provisions of the relevant laws to regulate the manufacture and handling medicines and the like such as other biological, herbal, and health preparations, and monitor their use through the following: - Set a registration system that takes into account the eff...\n• From 002 (Relevance: 4.0): (Article 6) Law: The state shall endeavour, through the Ministry, to provide an integrated network of Healthcare services covering all regions of the Kingdom, including primary, secondary, and specialized Healthcare levels The Ministry, in cooperation with the regions’ councils, shall determine the ...\n• From 002 (Relevance: 4.0): (7/4R ) The Ministry shall set the appropriate and effective mechanism to monitor the performance of the directorates, evaluawtwew i.tmso ohu.gtocvo.sames9, 3o7n a rSeaugduiMlaOr HbaswMiswO, waH.mnPodorh tha.gloolvd.s aStahuedmiM93 Oa7HccoSuSanuaudtdaiMib_OMleHo htheMreOfHoPr.o rtal SaudiMOH Saudi_M...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*",
+      "timestamp": "2025-05-27T08:58:49.376203",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Contract",
+          "Regulation",
+          "Royal Decree"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Royal Decree",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Formation & Registration",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 2.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 2.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "What are the penalties for non-compliance with commercial regulations?",
+      "timestamp": "2025-05-27T08:58:49.392110",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'What are the penalties for non-compliance with commercial regulations?', here are the key findings:\n\n**Document Types Consulted:** Regulation, Contract\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 5.0): (5/8R) The Ministry shall work under the provisions of the relevant laws to regulate the manufacture and handling medicines and the like such as other biological, herbal, and health preparations, and monitor their use through the following: - Set a registration system that takes into account the eff...\n• From 002 (Relevance: 5.0): (Article 6) Law: The state shall endeavour, through the Ministry, to provide an integrated network of Healthcare services covering all regions of the Kingdom, including primary, secondary, and specialized Healthcare levels The Ministry, in cooperation with the regions’ councils, shall determine the ...\n• From 002 (Relevance: 5.0): (7/4R ) The Ministry shall set the appropriate and effective mechanism to monitor the performance of the directorates, evaluawtwew i.tmso ohu.gtocvo.sames9, 3o7n a rSeaugduiMlaOr HbaswMiswO, waH.mnPodorh tha.gloolvd.s aStahuedmiM93 Oa7HccoSuSanuaudtdaiMib_OMleHo htheMreOfHoPr.o rtal SaudiMOH Saudi_M...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*",
+      "timestamp": "2025-05-27T08:58:53.128946",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Contract",
+          "Regulation",
+          "Royal Decree"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Royal Decree",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Formation & Registration",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "What are the contract law requirements for business agreements?",
+      "timestamp": "2025-05-27T08:58:53.148647",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'What are the contract law requirements for business agreements?', here are the key findings:\n\n**Document Types Consulted:** Contract\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 8.0): (5/8R) The Ministry shall work under the provisions of the relevant laws to regulate the manufacture and handling medicines and the like such as other biological, herbal, and health preparations, and monitor their use through the following: - Set a registration system that takes into account the eff...\n• From 002 (Relevance: 7.0): (8/5R) The Directorate may contract with one or more full-time or part-time practitioners of the profession for a period not exceeding a month in order to redress an imbalance in the provision of health service - especially in remote areas or in vital specialties (such as obstetrics, anesthesiology,...\n• From 002 (Relevance: 6.0): (5/3R) The Ministry shall conduct a periodical review to ensure the availability of an adequate number of beds and efficient distribution of hospitals and health centers in different regions In particular, it shall: (5/3-1R) Verify the fair and balanced distribution of the numbers of health centers,...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*",
+      "timestamp": "2025-05-27T08:58:56.678837",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Contract",
+          "Regulation",
+          "Royal Decree"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 8.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 7.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Royal Decree",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Formation & Registration",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "How do foreign investors establish businesses in Saudi Arabia?",
+      "timestamp": "2025-05-27T08:58:56.678837",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'How do foreign investors establish businesses in Saudi Arabia?', here are the key findings:\n\n**Document Types Consulted:** General Legal Document, Regulation, Contract\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 6.5): (5/8R) The Ministry shall work under the provisions of the relevant laws to regulate the manufacture and handling medicines and the like such as other biological, herbal, and health preparations, and monitor their use through the following: - Set a registration system that takes into account the eff...\n• From 004 (Relevance: 6.5): integration organizations, of the composition of the IHR Expert Roster. Chapter II – The Emergency Committee Article 48 Terms of reference and composition 1. The Director-General shall establish an Emergency Committee that at the request of the Director-General shall provide its views on: (a) whethe...\n• From 002 (Relevance: 5.5): - Mental health, as the Ministry shall assure the right to treatment and rehabilitation for mental patients in its health facilities in a manner that preserves their dignity and rights and rehabilitates them to practice their social and personal affairs Also, the Ministry shall set the procedures an...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*",
+      "timestamp": "2025-05-27T08:59:00.082825",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Contract",
+          "General Legal Document",
+          "Regulation"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "General Legal Document",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "General Legal Practice",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 6.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 4.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 4.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 4.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 3.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "004",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "General Legal Practice",
+          "file_name": "004.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:59:46Z",
+          "relevance_score": 3.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "What are the tax obligations for Saudi companies?",
+      "timestamp": "2025-05-27T08:59:00.106264",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'What are the tax obligations for Saudi companies?', here are the key findings:\n\n**Document Types Consulted:** Regulation, Contract\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 6.5): (5/8R) The Ministry shall work under the provisions of the relevant laws to regulate the manufacture and handling medicines and the like such as other biological, herbal, and health preparations, and monitor their use through the following: - Set a registration system that takes into account the eff...\n• From 002 (Relevance: 6.5): (Article 6) Law: The state shall endeavour, through the Ministry, to provide an integrated network of Healthcare services covering all regions of the Kingdom, including primary, secondary, and specialized Healthcare levels The Ministry, in cooperation with the regions’ councils, shall determine the ...\n• From 002 (Relevance: 6.5): (7/4R ) The Ministry shall set the appropriate and effective mechanism to monitor the performance of the directorates, evaluawtwew i.tmso ohu.gtocvo.sames9, 3o7n a rSeaugduiMlaOr HbaswMiswO, waH.mnPodorh tha.gloolvd.s aStahuedmiM93 Oa7HccoSuSanuaudtdaiMib_OMleHo htheMreOfHoPr.o rtal SaudiMOH Saudi_M...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*",
+      "timestamp": "2025-05-27T08:59:03.637205",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Contract",
+          "Regulation",
+          "Royal Decree"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Royal Decree",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Formation & Registration",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.5,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "What are the regulatory requirements for financial services?",
+      "timestamp": "2025-05-27T08:59:03.645789",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the legal documents from our Weaviate Cloud database (basic search) regarding 'What are the regulatory requirements for financial services?', here are the key findings:\n\n**Document Types Consulted:** Regulation\n**Jurisdictions:** Saudi Arabia\n\n**Key Information from Weaviate Cloud (Basic Search):**\n• From 002 (Relevance: 6.0): (Article 6) Law: The state shall endeavour, through the Ministry, to provide an integrated network of Healthcare services covering all regions of the Kingdom, including primary, secondary, and specialized Healthcare levels The Ministry, in cooperation with the regions’ councils, shall determine the ...\n• From 002 (Relevance: 5.0): (7/4R ) The Ministry shall set the appropriate and effective mechanism to monitor the performance of the directorates, evaluawtwew i.tmso ohu.gtocvo.sames9, 3o7n a rSeaugduiMlaOr HbaswMiswO, waH.mnPodorh tha.gloolvd.s aStahuedmiM93 Oa7HccoSuSanuaudtdaiMib_OMleHo htheMreOfHoPr.o rtal SaudiMOH Saudi_M...\n• From 002 (Relevance: 4.0): Healthcare Provision: Ensuring the existence of Healthcare without necessarily implying that it is provided or financed directly by the State, except as stipulated in the Articles of this Law 7 Minister: Minister of Health 8 Ministry: Ministry of Health 9 Council: Saudi Health Council (Council of He...\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.\n\n*Note: Response generated using basic search (semantic search disabled for stability).*",
+      "timestamp": "2025-05-27T08:59:07.118003",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 10,
+        "citations_provided": 10,
+        "document_types": [
+          "Regulation",
+          "Contract",
+          "Royal Decree"
+        ],
+        "jurisdictions": [
+          "Saudi Arabia"
+        ],
+        "search_method": "basic_search"
+      },
+      "citations": [
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 6.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 5.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Formation & Registration",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Labor & Employment Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Tax & Zakat Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 4.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Royal Decree",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Regulation",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Business Licensing & Permits",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        },
+        {
+          "title": "002",
+          "document_type": "Contract",
+          "jurisdiction": "Saudi Arabia",
+          "practice_area": "Commercial Law",
+          "file_name": "002.pdf",
+          "page_number": "1",
+          "processing_date": "2025-05-25T23:58:53Z",
+          "relevance_score": 3.0,
+          "source": "Weaviate Cloud Legal Database (Basic Search)"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "queries_count": 10,
+    "document_types_consulted": [
+      "General Legal Document",
+      "Regulation",
+      "Royal Decree",
+      "Contract"
+    ],
+    "jurisdictions_consulted": [
+      "Saudi Arabia"
+    ]
+  },
+  "end_time": "2025-05-27T08:59:07.935457"
+}
