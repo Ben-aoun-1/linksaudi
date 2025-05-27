@@ -1,0 +1,41 @@
+{
+  "session_id": "d28af9c8-faf2-4a3d-b93a-368cb7673c44",
+  "user_id": "anonymous",
+  "start_time": "2025-05-27T02:29:56.685192",
+  "messages": [
+    {
+      "role": "assistant",
+      "content": "Welcome to the Legal Compliance Assistant! \n\nI'm here to help you with legal questions related to Saudi Arabian law and regulations based on our legal document database. I can assist with:\n\n• Corporate law and business regulations\n• Contract law and commercial agreements  \n• Employment law and labor regulations\n• Regulatory compliance requirements\n• Commercial licensing and permits\n• International trade regulations\n\nPlease note that I provide general legal information based on available legal documents in our database and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney.\n\nHow can I assist you with your legal question today?",
+      "timestamp": "2025-05-27T02:29:56.685192",
+      "message_type": "welcome"
+    },
+    {
+      "role": "user",
+      "content": "tax law",
+      "timestamp": "2025-05-27T02:29:56.685192",
+      "filters": {
+        "document_type": null,
+        "jurisdiction": "Saudi Arabia"
+      },
+      "message_type": "question"
+    },
+    {
+      "role": "assistant",
+      "content": "Legal analysis service is currently unavailable. Please ensure all legal compliance dependencies are properly installed and configured.\n\n\n**Legal Disclaimer:** This information is provided for general guidance only based on our legal document database and does not constitute legal advice. Laws and regulations may change, and specific circumstances may affect how laws apply to your situation. For specific legal matters, please consult with a qualified attorney licensed to practice in the relevant jurisdiction.",
+      "timestamp": "2025-05-27T02:29:56.685192",
+      "message_type": "legal_response",
+      "metadata": {
+        "documents_consulted": 0,
+        "citations_provided": 0,
+        "document_types": [],
+        "jurisdictions": []
+      },
+      "citations": []
+    }
+  ],
+  "metadata": {
+    "queries_count": 1,
+    "document_types_consulted": [],
+    "jurisdictions_consulted": []
+  }
+}

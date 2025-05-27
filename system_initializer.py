@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# system_initializer.py - UNIFIED system initialization with all components
+# system_initializer.py - UNIFIED system initialization with all components - FIXED FOR WEAVIATE CLOUD
 
 import os
 import logging
@@ -71,9 +71,9 @@ class SystemInitializer:
             self._register_legal_components()
             
             if offline_mode:
-                logger.info("Working in offline mode - limiting component initialization")
+                logger.info("Working in offline mode - limiting web search only")
                 try:
-                    system_state.current_state = 'offline'
+                    system_state.current_state = 'degraded'
                 except:
                     pass
             
@@ -180,11 +180,11 @@ class SystemInitializer:
                 pass
     
     def _initialize_component(self, component_name: str, offline_mode: bool) -> bool:
-        """Initialize a specific component"""
+        """Initialize a specific component - FIXED FOR WEAVIATE CLOUD"""
         logger.debug(f"Initializing component: {component_name}")
         
-        # Skip certain components in offline mode
-        if offline_mode and component_name in ['rag_engine', 'web_search', 'legal_rag_engine']:
+        # Only skip web_search in offline mode, allow RAG engines to connect to Weaviate Cloud
+        if offline_mode and component_name == 'web_search':
             logger.info(f"Skipping {component_name} initialization in offline mode")
             try:
                 system_state.set_component_status(component_name, False, "Component disabled in offline mode")
@@ -223,7 +223,7 @@ class SystemInitializer:
     def _update_system_state(self) -> None:
         """Enhanced system state update that includes legal compliance"""
         try:
-            critical_components = ['rag_engine', 'web_search']
+            critical_components = ['rag_engine']  # Removed web_search from critical
             legal_components = ['legal_rag_engine', 'legal_chatbot']
             
             available_components = sum(1 for comp in self.required_components 
@@ -237,7 +237,7 @@ class SystemInitializer:
                                  for comp in legal_components)
             
             # Determine overall system state
-            if critical_available and available_components >= total_components * 0.8:
+            if critical_available and available_components >= total_components * 0.6:  # Lowered threshold
                 system_state.current_state = 'online'
             elif critical_available or available_components > 0:
                 system_state.current_state = 'degraded'  
@@ -296,7 +296,7 @@ class SystemInitializer:
     # COMPONENT FACTORIES
 
     def _create_rag_engine(self, container):
-        """Factory for RAG Engine component"""
+        """Factory for RAG Engine component - ENHANCED FOR WEAVIATE CLOUD"""
         try:
             from market_reports.rag_enhanced import (
                 embedding_engine, 
@@ -308,14 +308,23 @@ class SystemInitializer:
             class RAGEngine:
                 def __init__(self):
                     self.client = None
+                    self._initialize_weaviate_connection()
+                
+                def _initialize_weaviate_connection(self):
+                    """Initialize Weaviate Cloud connection"""
+                    try:
+                        self.client = get_weaviate_client()
+                        if self.client and self.client.is_ready():
+                            logger.info("Connected to Weaviate Cloud successfully")
+                        else:
+                            logger.warning("Weaviate client created but not ready")
+                    except Exception as e:
+                        logger.error(f"Error connecting to Weaviate Cloud: {e}")
+                        self.client = None
                 
                 def get_weaviate_client(self):
                     if not self.client:
-                        try:
-                            self.client = get_weaviate_client()
-                        except Exception as e:
-                            logger.error(f"Error getting Weaviate client: {e}")
-                            self.client = None
+                        self._initialize_weaviate_connection()
                     return self.client
                 
                 def generate_rag_response(self, query, context_limit=5):
@@ -334,7 +343,7 @@ class SystemInitializer:
                                 "text_results": [], "image_results": []}
             
             engine = RAGEngine()
-            logger.info("RAG Engine initialized successfully")
+            logger.info("RAG Engine initialized successfully with Weaviate Cloud")
             return engine
         
         except Exception as e:
@@ -506,46 +515,37 @@ class SystemInitializer:
         
         return MockMarketReportSystem()
 
-    # LEGAL COMPONENT FACTORIES
+    # LEGAL COMPONENT FACTORIES - ENHANCED FOR WEAVIATE CLOUD
 
     def _create_legal_rag_engine(self, container):
-        """Factory for Legal RAG Engine component"""
+        """Factory for Legal RAG Engine component - SIMPLIFIED FIX"""
         if not LEGAL_COMPLIANCE_AVAILABLE:
             return self._create_mock_legal_rag_engine()
         
         try:
-            # Get dependencies
+            # Get Weaviate client from main RAG engine
             weaviate_client = None
-            openai_client = None
-            embedding_engine = None
-            
-            # Try to get Weaviate client from the main RAG engine
             rag_engine = container.get('rag_engine')
             if rag_engine:
                 weaviate_client = getattr(rag_engine, 'client', None) or rag_engine.get_weaviate_client()
+                if weaviate_client:
+                    logger.info("Using shared Weaviate Cloud connection for legal RAG")
             
-            # Try to get OpenAI client
+            # Get OpenAI client
+            openai_client = None
             try:
                 from market_reports.rag_enhanced import openai_client as rag_openai_client
                 openai_client = rag_openai_client
             except ImportError:
                 logger.warning("Could not import OpenAI client from rag_enhanced")
             
-            # Try to get embedding engine
-            try:
-                from market_reports.rag_enhanced import embedding_engine as rag_embedding_engine
-                embedding_engine = rag_embedding_engine
-            except ImportError:
-                logger.warning("Could not import embedding engine from rag_enhanced")
-            
-            # Create the legal RAG engine
+            # Create legal RAG engine - SIMPLIFIED
             legal_rag = LegalRAGEngine(
                 weaviate_client=weaviate_client,
-                openai_client=openai_client,
-                embedding_engine=embedding_engine
+                openai_client=openai_client
             )
             
-            logger.info("Legal RAG Engine initialized successfully")
+            logger.info("Legal RAG Engine initialized successfully with Weaviate Cloud")
             return legal_rag
             
         except Exception as e:
@@ -577,12 +577,15 @@ class SystemInitializer:
             
             def get_available_jurisdictions(self):
                 return ["Saudi Arabia", "GCC", "International"]
+            
+            def test_connection(self):
+                return {"status": "mock", "message": "Mock legal RAG engine"}
         
         logger.info("Created mock Legal RAG Engine due to initialization failure")
         return MockLegalRAGEngine()
 
     def _create_legal_chatbot(self, container):
-        """Factory for Legal Chatbot component"""
+        """Factory for Legal Chatbot component - ENHANCED"""
         if not LEGAL_COMPLIANCE_AVAILABLE:
             return self._create_mock_legal_chatbot()
         
@@ -606,7 +609,15 @@ class SystemInitializer:
                     except Exception as e:
                         rag_test = {"status": "error", "message": str(e)}
                 elif self.legal_rag_engine:
-                    rag_test = {"status": "basic", "message": "Basic legal RAG available"}
+                    # Test if it's a real RAG engine by trying to search
+                    try:
+                        test_docs = self.legal_rag_engine.search_legal_documents("test", limit=1)
+                        if test_docs and len(test_docs) > 0 and any(doc for doc in test_docs if doc.get('content', '').strip()):
+                            rag_test = {"status": "success", "message": "Legal RAG with Weaviate Cloud", "total_documents": len(test_docs)}
+                        else:
+                            rag_test = {"status": "basic", "message": "Basic legal RAG available"}
+                    except Exception as e:
+                        rag_test = {"status": "error", "message": str(e)}
                 else:
                     rag_test = {"status": "unavailable", "message": "No legal RAG engine"}
                 

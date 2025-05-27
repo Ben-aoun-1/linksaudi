@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import streamlit as st
 
 st.set_page_config(
@@ -47,8 +46,6 @@ except ImportError as e:
 
 try:
     from legal_compliance.legal_rag_engine import LegalRAGEngine as FixedLegalRAGEngine
-    
-    
     print("✅ FIXED Legal RAG components imported successfully")
 except ImportError as e:
     FIXED_LEGAL_AVAILABLE = False
@@ -321,16 +318,23 @@ def initialize_application():
         _create_default_config()
         
         if st.session_state['initialized']:
-            logger.info("Application already initialized")
+            if MARKET_UTILS_AVAILABLE:
+                from market_reports.utils import logger
+                logger.info("Application already initialized")
             return True
         
         if CORE_IMPORTS_AVAILABLE:
+            # Don't use offline mode by default - let system connect to Weaviate Cloud
             return _initialize_with_new_architecture()
         else:
             return _initialize_with_fallback()
             
     except Exception as e:
-        logger.error(f"Critical error initializing application: {e}")
+        if MARKET_UTILS_AVAILABLE:
+            from market_reports.utils import logger
+            logger.error(f"Critical error initializing application: {e}")
+        else:
+            print(f"Critical error initializing application: {e}")
         return _handle_initialization_failure()
 
 def _create_directories():
@@ -376,7 +380,9 @@ def _create_default_config():
         }
         with open(config_file, 'w', encoding='utf-8') as f:
             json.dump(default_config, f, ensure_ascii=False, indent=2)
-            logger.info(f"Created default config file at {config_file}")
+            if MARKET_UTILS_AVAILABLE:
+                from market_reports.utils import logger
+                logger.info(f"Created default config file at {config_file}")
 
 def _initialize_with_new_architecture():
     try:
@@ -386,7 +392,9 @@ def _initialize_with_new_architecture():
         
         logger.info("Using refactored architecture")
         
-        success = initialize_system(offline_mode=st.session_state['offline_mode'])
+        # Initialize system without offline mode unless explicitly requested
+        offline_mode = st.session_state.get('offline_mode', False)
+        success = initialize_system(offline_mode=offline_mode)
         
         if success:
             logger.info("System initialized successfully with new architecture")
@@ -404,25 +412,39 @@ def _initialize_with_new_architecture():
         return False
         
     except ImportError as e:
-        logger.info(f"Refactored architecture not available: {e}")
+        if MARKET_UTILS_AVAILABLE:
+            from market_reports.utils import logger
+            logger.info(f"Refactored architecture not available: {e}")
+        else:
+            print(f"Refactored architecture not available: {e}")
         return False
 
 def _initialize_with_fallback():
     try:
         if st.session_state['offline_mode']:
-            logger.info("Working in offline mode. Some features may be limited.")
+            if MARKET_UTILS_AVAILABLE:
+                from market_reports.utils import logger
+                logger.info("Working in offline mode. Some features may be limited.")
+            else:
+                print("Working in offline mode. Some features may be limited.")
             st.session_state['connection_status'] = 'offline'
             st.session_state['system_status'] = 'offline'
             st.session_state['initialized'] = True
             return True
         return True
     except Exception as e:
-        logger.error(f"Critical error during legacy initialization: {e}")
+        if MARKET_UTILS_AVAILABLE:
+            from market_reports.utils import logger
+            logger.error(f"Critical error during legacy initialization: {e}")
+        else:
+            print(f"Critical error during legacy initialization: {e}")
         return False
 
 def _handle_initialization_failure():
     import traceback
-    logger.debug(traceback.format_exc())
+    if MARKET_UTILS_AVAILABLE:
+        from market_reports.utils import logger
+        logger.debug(traceback.format_exc())
     
     st.session_state['system_status'] = 'offline'
     st.session_state['connection_status'] = 'offline'
@@ -431,7 +453,7 @@ def _handle_initialization_failure():
     return False
 
 def initialize_legal_compliance():
-    """Initialize legal compliance system - SIMPLIFIED VERSION"""
+    """Initialize legal compliance system - ENHANCED FOR WEAVIATE CLOUD"""
     try:
         if not LEGAL_COMPLIANCE_AVAILABLE:
             st.session_state['legal_system_available'] = False
@@ -445,50 +467,69 @@ def initialize_legal_compliance():
             st.session_state['legal_rag_engine'] = container.get('legal_rag_engine')
             st.session_state['legal_chatbot'] = container.get('legal_chatbot')
             
-            return _test_legal_system_simple()
+            return _test_legal_system_enhanced()
         else:
             st.session_state['legal_system_available'] = False
             st.session_state['legal_system_type'] = 'unavailable'
-            logger.warning("Legal compliance components not found in container")
+            if MARKET_UTILS_AVAILABLE:
+                from market_reports.utils import logger
+                logger.warning("Legal compliance components not found in container")
             return False
     
     except Exception as e:
-        logger.error(f"Error initializing legal compliance: {e}")
+        if MARKET_UTILS_AVAILABLE:
+            from market_reports.utils import logger
+            logger.error(f"Error initializing legal compliance: {e}")
         st.session_state['legal_system_available'] = False
         st.session_state['legal_system_type'] = 'unavailable'
         return False
 
-def _test_legal_system_simple():
-    """Simplified legal system test"""
+def _test_legal_system_enhanced():
+    """Enhanced legal system test with Weaviate Cloud detection"""
     try:
         if hasattr(st.session_state['legal_chatbot'], 'get_system_status'):
             system_status = st.session_state['legal_chatbot'].get_system_status()
-            logger.info(f"Legal system status: {system_status}")
+            if MARKET_UTILS_AVAILABLE:
+                from market_reports.utils import logger
+                logger.info(f"Legal system status: {system_status}")
             
             rag_test = system_status.get('rag_connection_test', {})
-            if rag_test.get('status') == 'success':
+            rag_status = rag_test.get('status', 'unknown')
+            
+            if rag_status == 'success':
                 st.session_state['legal_system_available'] = True
-                st.session_state['legal_system_type'] = 'full_rag'
+                st.session_state['legal_system_type'] = 'full_rag_cloud'
                 st.session_state['legal_document_count'] = rag_test.get('total_documents', 0)
-                logger.info("Legal RAG system with Weaviate available (database only)")
-            else:
+                if MARKET_UTILS_AVAILABLE:
+                    from market_reports.utils import logger
+                    logger.info("Legal RAG system with Weaviate Cloud available")
+            elif rag_status == 'basic':
                 st.session_state['legal_system_available'] = True
                 st.session_state['legal_system_type'] = 'basic'
                 st.session_state['legal_document_count'] = 0
-                logger.info("Basic legal system available (database only)")
+                if MARKET_UTILS_AVAILABLE:
+                    from market_reports.utils import logger
+                    logger.info("Basic legal system available (mock data)")
+            else:
+                st.session_state['legal_system_available'] = True
+                st.session_state['legal_system_type'] = 'limited'
+                st.session_state['legal_document_count'] = 0
+                if MARKET_UTILS_AVAILABLE:
+                    from market_reports.utils import logger
+                    logger.info("Limited legal system available")
         else:
             st.session_state['legal_system_available'] = True
             st.session_state['legal_system_type'] = 'basic'
             st.session_state['legal_document_count'] = 0
     except Exception as e:
-        logger.error(f"Error testing legal system: {e}")
+        if MARKET_UTILS_AVAILABLE:
+            from market_reports.utils import logger
+            logger.error(f"Error testing legal system: {e}")
         st.session_state['legal_system_available'] = True
         st.session_state['legal_system_type'] = 'basic'
         st.session_state['legal_document_count'] = 0
     
     return True
-
-
 
 def display_status_indicator():
     status = st.session_state['system_status']
@@ -635,7 +676,7 @@ def _display_legal_session_management():
         </div>
         """, unsafe_allow_html=True)
 
-def _display_legal_chat_interface_no_web():
+def _display_legal_chat_interface_enhanced():
     st.markdown("### 💬 Ask Your Legal Question")
     
     col1, col2 = st.columns([3, 1])
@@ -663,11 +704,18 @@ def _display_legal_chat_interface_no_web():
         selected_category = st.selectbox("Legal Category:", legal_categories)
         selected_jurisdiction = st.selectbox("Jurisdiction:", jurisdictions)
         
-        st.info("📍 **Database Only Mode**\nResponses are based on legal documents in our database only.")
+        # Enhanced status display
+        system_type = st.session_state.get('legal_system_type', 'unknown')
+        if system_type == 'full_rag_cloud':
+            st.success("🌟 **Weaviate Cloud Connected**\nResponses from legal database")
+        elif system_type == 'basic':
+            st.info("📋 **Mock Data Mode**\nUsing sample legal responses")
+        else:
+            st.warning("⚠️ **Limited Mode**\nBasic legal guidance only")
     
     if st.button("🔍 Get Legal Guidance", type="primary"):
         if legal_question.strip():
-            _process_legal_question_no_web(
+            _process_legal_question_enhanced(
                 legal_question, 
                 selected_category if selected_category != "All Categories" else None,
                 selected_jurisdiction
@@ -675,21 +723,26 @@ def _display_legal_chat_interface_no_web():
         else:
             st.warning("Please enter a legal question.")
     
-    _display_legal_chat_history_no_web()
+    _display_legal_chat_history_enhanced()
 
-def _process_legal_question_no_web(question, category, jurisdiction):
+def _process_legal_question_enhanced(question, category, jurisdiction):
     if 'legal_chatbot' not in st.session_state:
         st.error("Legal chatbot not available. Please check system status.")
         return
     
     try:
-        update_loading, complete_loading = create_loading_state("Analyzing your legal question (database only)...")
+        update_loading, complete_loading = create_loading_state("Analyzing your legal question...")
         
         if not st.session_state.get('current_legal_session'):
             session_id = st.session_state['legal_chatbot'].start_new_session()
             st.session_state['current_legal_session'] = session_id
         
-        update_loading(message="Searching legal documents in database...")
+        system_type = st.session_state.get('legal_system_type', 'unknown')
+        if system_type == 'full_rag_cloud':
+            update_loading(message="Searching Weaviate Cloud legal database...")
+        else:
+            update_loading(message="Processing with available legal data...")
+        
         response = st.session_state['legal_chatbot'].ask_legal_question(
             question=question,
             document_type=category,
@@ -718,7 +771,8 @@ def _process_legal_question_no_web(question, category, jurisdiction):
                 'timestamp': datetime.now().isoformat(),
                 'citations': response.get('citations', []),
                 'documents_consulted': response.get('documents_consulted', 0),
-                'source': 'database_only'
+                'source': f'legal_system_{system_type}',
+                'system_type': system_type
             })
             
             st.rerun()
@@ -729,7 +783,7 @@ def _process_legal_question_no_web(question, category, jurisdiction):
         complete_loading(success=False, message=f"Error: {str(e)}")
         st.error(f"Error processing legal question: {e}")
 
-def _display_legal_chat_history_no_web():
+def _display_legal_chat_history_enhanced():
     if st.session_state.get('legal_chat_messages'):
         st.markdown("### 📝 Conversation History")
         
@@ -743,13 +797,24 @@ def _display_legal_chat_history_no_web():
                 """, unsafe_allow_html=True)
             else:
                 formatted_content = message['content'].replace('\n', '<br>')
-                source_info = message.get('source', 'unknown')
+                system_type = message.get('system_type', 'unknown')
+                
+                # Enhanced source display
+                if system_type == 'full_rag_cloud':
+                    source_badge = "🌟 Weaviate Cloud"
+                    source_color = "var(--success-green)"
+                elif system_type == 'basic':
+                    source_badge = "📋 Mock Data"
+                    source_color = "var(--info-blue)"
+                else:
+                    source_badge = "⚠️ Limited"
+                    source_color = "var(--warning-amber)"
                 
                 st.markdown(f"""
                 <div class="chat-message assistant-message">
-                    <strong>Legal Assistant (Database Only):</strong><br>
+                    <strong>Legal Assistant:</strong><br>
                     {formatted_content}
-                    <br><small>Source: {source_info}</small>
+                    <br><br><small style="color: {source_color}; font-weight: bold;">Source: {source_badge}</small>
                 </div>
                 """, unsafe_allow_html=True)
                 
@@ -761,15 +826,18 @@ def _display_legal_chat_history_no_web():
                                 <strong>{i}. {citation.get('title', 'Legal Document')}</strong><br>
                                 Type: {citation.get('document_type', 'Unknown')}<br>
                                 Jurisdiction: {citation.get('jurisdiction', 'Unknown')}<br>
-                                Source: Legal Database
+                                Source: {citation.get('source', 'Legal Database')}
                             </div>
                             """, unsafe_allow_html=True)
                 
                 docs_consulted = message.get('documents_consulted', 0)
                 if docs_consulted > 0:
-                    st.info(f"📄 Consulted {docs_consulted} legal documents from database")
+                    if system_type == 'full_rag_cloud':
+                        st.success(f"📄 Consulted {docs_consulted} documents from Weaviate Cloud legal database")
+                    else:
+                        st.info(f"📄 Consulted {docs_consulted} legal documents from database")
 
-def _display_additional_legal_tools_no_web():
+def _display_additional_legal_tools_enhanced():
     st.markdown("### 🛠️ Additional Legal Tools")
     
     col1, col2 = st.columns(2)
@@ -781,11 +849,11 @@ def _display_additional_legal_tools_no_web():
     
     with col2:
         if st.button("📋 Document Categories"):
-            _show_legal_categories()
+            _show_legal_categories_enhanced()
     
-    _display_legal_tools_content_no_web()
+    _display_legal_tools_content_enhanced()
 
-def _display_legal_tools_content_no_web():
+def _display_legal_tools_content_enhanced():
     if st.session_state.get('show_session_report'):
         with st.expander("📊 Session Analytics", expanded=True):
             if 'legal_chatbot' in st.session_state:
@@ -811,7 +879,14 @@ def _display_legal_tools_content_no_web():
                             st.markdown("**Jurisdictions Consulted:**")
                             st.markdown(", ".join(session_summary['jurisdictions_consulted']))
                         
-                        st.info("📍 All responses are based on legal database documents only.")
+                        # Enhanced system status display
+                        system_type = st.session_state.get('legal_system_type', 'unknown')
+                        if system_type == 'full_rag_cloud':
+                            st.success("🌟 All responses sourced from Weaviate Cloud legal database")
+                        elif system_type == 'basic':
+                            st.info("📋 Responses generated using mock legal data")
+                        else:
+                            st.warning("⚠️ Limited legal system - basic guidance only")
                     else:
                         st.info("No active session to analyze.")
                 except Exception as e:
@@ -821,23 +896,107 @@ def _display_legal_tools_content_no_web():
                 st.session_state['show_session_report'] = False
                 st.rerun()
 
-def _show_legal_categories():
+def _show_legal_categories_enhanced():
     if 'legal_chatbot' in st.session_state:
         try:
             categories = st.session_state['legal_chatbot'].get_legal_categories()
             jurisdictions = st.session_state['legal_chatbot'].get_available_jurisdictions()
             
-            st.markdown("**Available Legal Categories:**")
-            for category in categories:
-                st.markdown(f"• {category}")
+            col1, col2 = st.columns(2)
             
-            st.markdown("**Available Jurisdictions:**")
-            for jurisdiction in jurisdictions:
-                st.markdown(f"• {jurisdiction}")
+            with col1:
+                st.markdown("**Available Legal Categories:**")
+                for category in categories:
+                    st.markdown(f"• {category}")
             
-            st.info("📍 All legal guidance is based on documents in our legal database.")
+            with col2:
+                st.markdown("**Available Jurisdictions:**")
+                for jurisdiction in jurisdictions:
+                    st.markdown(f"• {jurisdiction}")
+            
+            # Enhanced status display
+            system_type = st.session_state.get('legal_system_type', 'unknown')
+            doc_count = st.session_state.get('legal_document_count', 0)
+            
+            if system_type == 'full_rag_cloud':
+                st.success(f"🌟 **Weaviate Cloud Status**: Connected with {doc_count:,} legal documents")
+            elif system_type == 'basic':
+                st.info("📋 **Mock Data Mode**: Using sample legal categories")
+            else:
+                st.warning("⚠️ **Limited Mode**: Basic legal categories available")
+                
         except Exception as e:
             st.error(f"Error getting legal categories: {e}")
+
+def _display_legal_system_status_enhanced():
+    system_type = st.session_state.get('legal_system_type', 'unknown')
+    doc_count = st.session_state.get('legal_document_count', 0)
+    
+    if system_type == 'full_rag_cloud':
+        st.markdown(f"""
+        <div class="system-status-full-rag">
+            🌟 <strong>Weaviate Cloud Connected</strong> - {doc_count:,} legal documents available
+        </div>
+        """, unsafe_allow_html=True)
+    elif system_type == 'basic':
+        st.markdown("""
+        <div class="system-status-basic">
+            📋 <strong>Mock Data Mode</strong> - Using sample legal responses
+        </div>
+        """, unsafe_allow_html=True)
+    elif system_type == 'limited':
+        st.markdown("""
+        <div class="system-status-limited">
+            ⚠️ <strong>Limited Legal System</strong> - Basic functionality available
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.warning("⚪ **Legal System Status Unknown**")
+
+def _display_legal_system_metrics_enhanced():
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        system_type = st.session_state.get('legal_system_type', 'unknown')
+        if system_type == 'full_rag_cloud':
+            system_status = "🌟 Weaviate Cloud"
+        elif system_type == 'basic':
+            system_status = "📋 Mock Data"
+        elif system_type == 'limited':
+            system_status = "⚠️ Limited"
+        else:
+            system_status = "⚪ Unknown"
+        st.metric("System Type", system_status)
+    
+    with col2:
+        st.metric("Queries Today", st.session_state['legal_query_count'])
+    
+    with col3:
+        legal_session_active = st.session_state['current_legal_session'] is not None
+        st.metric("Session", "Active" if legal_session_active else "None")
+    
+    with col4:
+        doc_count = st.session_state.get('legal_document_count', 0)
+        if doc_count > 0:
+            st.metric("Legal Documents", f"{doc_count:,}")
+        else:
+            st.metric("Legal Documents", "N/A")
+
+def _display_legal_disclaimer():
+    st.markdown("""
+    <div class="legal-disclaimer">
+        <h4>⚖️ Legal Disclaimer</h4>
+        <p><strong>Important:</strong> This AI assistant provides general legal information based on legal documents in our database and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney licensed in the relevant jurisdiction.</p>
+        <ul>
+            <li>Responses are for informational purposes only</li>
+            <li>Based on legal documents in our database (enhanced with Weaviate Cloud when available)</li>
+            <li>Laws and regulations may change frequently</li>
+            <li>Individual circumstances may affect legal outcomes</li>
+            <li>Always verify information with current legal sources</li>
+        </ul>
+        <p><strong>📍 Database Mode:</strong> This system uses legal documents stored in our database. When Weaviate Cloud is connected, responses are enhanced with semantic search capabilities.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 def _display_chat_controls():
     col1, col2 = st.columns(2)
@@ -854,6 +1013,7 @@ def _display_chat_controls():
                 chat_data = {
                     'session_id': st.session_state.get('current_legal_session', 'unknown'),
                     'timestamp': datetime.now().isoformat(),
+                    'system_type': st.session_state.get('legal_system_type', 'unknown'),
                     'messages': st.session_state['legal_chat_messages']
                 }
                 
@@ -871,16 +1031,26 @@ def legal_compliance_interface():
     st.markdown('<h2 class="sub-header">Legal Compliance Assistant</h2>', unsafe_allow_html=True)
     
     if not st.session_state['legal_system_available']:
+        st.error("⚠️ Legal compliance system is not available. Please contact support.")
         
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Try to Initialize Legal System"):
+                initialize_legal_compliance()
+                st.rerun()
+        with col2:
+            if st.button("Run Legal System Diagnostics"):
+                st.session_state['show_legal_diagnostics'] = True
+                st.rerun()
         return
     
-    _display_legal_system_status_no_web()
-    _display_legal_system_metrics()
+    _display_legal_system_status_enhanced()
+    _display_legal_system_metrics_enhanced()
     
     _display_legal_disclaimer()
     _display_legal_session_management()
-    _display_legal_chat_interface_no_web()
-    _display_additional_legal_tools_no_web()
+    _display_legal_chat_interface_enhanced()
+    _display_additional_legal_tools_enhanced()
     _display_chat_controls()
 
 def dashboard_interface():
@@ -933,21 +1103,21 @@ def dashboard_interface():
     with col2:
         legal_status = st.session_state.get('legal_system_type', 'unavailable')
         legal_description = {
-            'full_rag': 'Full RAG system with legal database',
-            'limited': 'Limited functionality without database',
-            'basic': 'Basic responses for demonstration',
+            'full_rag_cloud': 'Full RAG system with Weaviate Cloud',
+            'basic': 'Mock data for demonstration',
+            'limited': 'Basic responses available',
             'unavailable': 'System not available'
         }.get(legal_status, 'Unknown status')
         
         st.markdown(f"""
         <div class="section-card">
-            <h4>⚖️ Legal Compliance (Database Only)</h4>
+            <h4>⚖️ Legal Compliance (Enhanced)</h4>
             <ul>
                 <li>Saudi Arabian legal guidance</li>
-                <li>Legal document analysis</li>
+                <li>Legal document analysis via Weaviate Cloud</li>
                 <li>Regulatory compliance checking</li>
                 <li>Consultation session management</li>
-                <li>Database-only responses (no web search)</li>
+                <li>Semantic search capabilities</li>
             </ul>
             <p><strong>Status:</strong> {legal_description}</p>
         </div>
@@ -1264,8 +1434,8 @@ def system_status_interface():
                 st.metric("Initialization", "Complete" if system_overview.get('initialized') else "Incomplete")
             
             with col4:
-                legal_status = system_overview.get('legal_system', {}).get('status', 'unknown')
-                st.metric("Legal System", legal_status.title())
+                legal_status = st.session_state.get('legal_system_type', 'unknown')
+                st.metric("Legal System", legal_status.replace('_', ' ').title())
             
             st.markdown("### 🔍 Component Status")
             
@@ -1275,25 +1445,24 @@ def system_status_interface():
                 else:
                     st.error(f"❌ **{component}**: {status.get('description', 'Unavailable')}")
             
-            legal_system = system_overview.get('legal_system', {})
-            if legal_system.get('components'):
-                st.markdown("### ⚖️ Legal System Details")
-                
-                st.info(f"🔧 **Web Search Status:** {'Disabled' if not legal_system.get('web_search_enabled', True) else 'Enabled'}")
-                
-                for comp_name, comp_status in legal_system['components'].items():
-                    if comp_status.get('available'):
-                        comp_type = comp_status.get('type', 'unknown')
-                        if comp_type == 'real':
-                            st.success(f"✅ **{comp_name}**: Fully operational")
-                        elif comp_type == 'enhanced':
-                            st.success(f"✅ **{comp_name}**: Enhanced version")
-                        elif comp_type == 'limited':
-                            st.warning(f"⚠️ **{comp_name}**: Limited functionality")
-                        else:
-                            st.info(f"ℹ️ **{comp_name}**: {comp_type}")
-                    else:
-                        st.error(f"❌ **{comp_name}**: {comp_status.get('error', 'Unavailable')}")
+            # Enhanced legal system details
+            st.markdown("### ⚖️ Legal System Details")
+            
+            legal_type = st.session_state.get('legal_system_type', 'unknown')
+            legal_docs = st.session_state.get('legal_document_count', 0)
+            
+            if legal_type == 'full_rag_cloud':
+                st.success(f"🌟 **Weaviate Cloud Connected**: {legal_docs:,} legal documents available")
+                st.info("✅ **Semantic Search**: Enabled via Weaviate Cloud")
+                st.info("✅ **Legal RAG**: Full functionality with OpenAI integration")
+            elif legal_type == 'basic':
+                st.info("📋 **Mock Data Mode**: Using sample legal responses for demonstration")
+                st.warning("⚠️ **Weaviate Cloud**: Not connected - using fallback data")
+            elif legal_type == 'limited':
+                st.warning("⚠️ **Limited Mode**: Basic legal guidance available")
+                st.error("❌ **Advanced Features**: Not available")
+            else:
+                st.error("❌ **Legal System**: Status unknown or unavailable")
         
         except Exception as e:
             st.error(f"Error getting system overview: {e}")
@@ -1321,6 +1490,12 @@ def system_status_interface():
         if st.button("📊 Export Diagnostics"):
             if CORE_IMPORTS_AVAILABLE:
                 diagnostics = get_system_overview()
+                diagnostics['legal_system_details'] = {
+                    'type': st.session_state.get('legal_system_type', 'unknown'),
+                    'document_count': st.session_state.get('legal_document_count', 0),
+                    'queries_processed': st.session_state.get('legal_query_count', 0),
+                    'session_active': st.session_state.get('current_legal_session') is not None
+                }
                 st.download_button(
                     "Download Diagnostics",
                     data=json.dumps(diagnostics, indent=2),
@@ -1344,48 +1519,60 @@ def help_documentation_interface():
     - **Interactive Analysis**: Chat with your reports to get specific insights
     - **Export Capabilities**: Download reports in PDF and JSON formats
     
-    #### ⚖️ Legal Compliance Features (Database Only):
+    #### ⚖️ Legal Compliance Features (Enhanced with Weaviate Cloud):
     - **Saudi Arabian Law Guidance**: Get legal guidance based on local regulations
-    - **Document Analysis**: Search through legal document databases
+    - **Semantic Document Search**: Advanced search through legal document databases via Weaviate Cloud
     - **Compliance Checking**: Verify regulatory requirements
     - **Session Management**: Track and export legal consultation sessions
-    - **Database Only Mode**: Responses based entirely on curated legal documents (no web search)
+    - **Real-time Legal Database**: Access to up-to-date legal documents when Weaviate Cloud is connected
     
     ### 🔧 System Requirements
     
     For full functionality, ensure you have:
     - OpenAI API key configured
-    - Weaviate database connection (for advanced features)
+    - Weaviate Cloud connection (for advanced legal features)
     - All Python dependencies installed
     
     ### 💡 Tips for Best Results
     
     1. **Market Reports**: Be specific about sectors and geographic focus
     2. **Legal Questions**: Include jurisdiction and business context
-    3. **System Performance**: Use offline mode if experiencing connectivity issues
-    4. **Legal System**: Note that web search is disabled for legal compliance
+    3. **System Performance**: Check system status for optimal performance
+    4. **Legal System**: Weaviate Cloud connection provides the best legal guidance
     
     ### 🆘 Troubleshooting
     
     If you encounter issues:
     1. Check the System Status page for component availability
     2. Try refreshing the system using the sidebar controls
-    3. Enable offline mode for basic functionality
+    3. Verify Weaviate Cloud connection for legal features
     4. Contact support if problems persist
     
-    ### ⚖️ Legal System Notes
+    ### ⚖️ Legal System Status Guide
     
-    The legal compliance system operates in **Database Only Mode**:
-    - All responses are based on legal documents in our database
-    - Web search functionality has been disabled for legal compliance
-    - This ensures consistent and controlled responses
-    - For current legal information, consult with qualified attorneys
+    **🌟 Weaviate Cloud Connected**: 
+    - Full semantic search capabilities
+    - Access to complete legal document database
+    - Best performance and accuracy
+    
+    **📋 Mock Data Mode**: 
+    - Demonstration mode with sample responses
+    - No real legal documents accessed
+    - For testing and demonstration only
+    
+    **⚠️ Limited Mode**: 
+    - Basic legal guidance only
+    - Reduced functionality
+    - Check system configuration
     """)
     
     with st.expander("❓ Frequently Asked Questions"):
         st.markdown("""
-        **Q: Why isn't the legal web search working?**
-        A: Legal web search has been intentionally disabled. The system now operates in database-only mode for better compliance and consistency.
+        **Q: How do I get the best legal responses?**
+        A: Ensure Weaviate Cloud is connected for access to the full legal document database with semantic search.
+        
+        **Q: What does "Weaviate Cloud Connected" mean?**
+        A: This means the system has access to the full legal document database with advanced semantic search capabilities.
         
         **Q: How do I improve report quality?**
         A: Enable web research enhancement and provide specific industry focus in your queries.
@@ -1393,11 +1580,11 @@ def help_documentation_interface():
         **Q: Can I export my data?**
         A: Yes! Use the export buttons in each section to download reports, chat history, and diagnostics.
         
-        **Q: What does "offline mode" do?**
-        A: Offline mode uses cached data only and disables web-based features for better performance.
+        **Q: What's the difference between legal system modes?**
+        A: Weaviate Cloud provides real legal documents, Mock Data is for demonstration, and Limited Mode offers basic guidance only.
         
         **Q: How accurate is the legal information?**
-        A: Legal information is based on documents in our database. Always consult with qualified attorneys for specific legal matters.
+        A: When Weaviate Cloud is connected, responses are based on real legal documents. Always consult with qualified attorneys for specific legal matters.
         """)
     
     st.markdown("""
@@ -1407,76 +1594,9 @@ def help_documentation_interface():
     - Check the System Status page for diagnostics
     - Review the troubleshooting steps above
     - Export system diagnostics for detailed error information
+    - Verify Weaviate Cloud connection for legal features
     """)
-def _display_legal_system_status_no_web():
-    system_type = st.session_state.get('legal_system_type', 'unknown')
-    
-    if system_type == 'full_rag':
-        st.markdown("""
-        <div class="system-status-full-rag">
-            🟢 <strong>Legal RAG System Active</strong> - Connected to Weaviate legal database (Database Only)
-        </div>
-        """, unsafe_allow_html=True)
-    elif system_type == 'limited':
-        st.markdown("""
-        <div class="system-status-limited">
-            🟡 <strong>Limited Legal System</strong> - Basic functionality available, database only
-        </div>
-        """, unsafe_allow_html=True)
-    elif system_type == 'basic':
-        st.markdown("""
-        <div class="system-status-basic">
-            🔵 <strong>Basic Legal System</strong> - Using database responses only
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.warning("⚪ **Legal System Status Unknown**")
 
-def _display_legal_system_metrics():
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        system_type = st.session_state.get('legal_system_type', 'unknown')
-        if system_type == 'full_rag':
-            system_status = "🟢 Full RAG"
-        elif system_type == 'limited':
-            system_status = "🟡 Limited"
-        elif system_type == 'basic':
-            system_status = "🔵 Basic"
-        else:
-            system_status = "⚪ Unknown"
-        st.metric("System Type", system_status)
-    
-    with col2:
-        st.metric("Queries Today", st.session_state['legal_query_count'])
-    
-    with col3:
-        legal_session_active = st.session_state['current_legal_session'] is not None
-        st.metric("Session", "Active" if legal_session_active else "None")
-    
-    with col4:
-        doc_count = st.session_state.get('legal_document_count', 0)
-        if doc_count > 0:
-            st.metric("Legal Documents", f"{doc_count:,}")
-        else:
-            st.metric("Legal Documents", "N/A")
-
-
-def _display_legal_disclaimer():
-    st.markdown("""
-    <div class="legal-disclaimer">
-        <h4>⚖️ Legal Disclaimer</h4>
-        <p><strong>Important:</strong> This AI assistant provides general legal information based on legal documents in our database and should not replace professional legal advice. For specific legal matters, always consult with a qualified attorney licensed in the relevant jurisdiction.</p>
-        <ul>
-            <li>Responses are for informational purposes only</li>
-            <li>Based on legal documents in our database only (no web search)</li>
-            <li>Laws and regulations may change frequently</li>
-            <li>Individual circumstances may affect legal outcomes</li>
-            <li>Always verify information with current legal sources</li>
-        </ul>
-        <p><strong>📍 Database Only Mode:</strong> This system uses only legal documents stored in our database. It does not search the web for current legal information.</p>
-    </div>
-    """, unsafe_allow_html=True)
 def main():
     if not initialize_application():
         st.error("⚠️ Application initialization failed. Some features may not be available.")
@@ -1504,7 +1624,7 @@ def main():
         offline_mode = st.checkbox(
             "Offline Mode", 
             value=st.session_state.get('offline_mode', False),
-            help="Work with cached data only"
+            help="Work with cached data only (disables web search)"
         )
         
         if offline_mode != st.session_state.get('offline_mode', False):
@@ -1517,12 +1637,21 @@ def main():
         
         st.markdown("### 📈 Quick Stats")
         st.metric("System Status", st.session_state.get('system_status', 'Unknown'))
-        st.metric("Reports Generated", len(st.session_state.get('reports', [])))
+        st.metric("Market Reports", len(st.session_state.get('reports', [])))
         st.metric("Legal Queries", st.session_state.get('legal_query_count', 0))
         
+        # Enhanced legal system info
         legal_system_info = st.session_state.get('legal_system_type', 'unknown')
-        if legal_system_info != 'unknown':
-            st.info(f"Legal System: {legal_system_info.replace('_', ' ').title()} (Database Only)")
+        legal_doc_count = st.session_state.get('legal_document_count', 0)
+        
+        if legal_system_info == 'full_rag_cloud':
+            st.success(f"🌟 Weaviate Cloud: {legal_doc_count:,} docs")
+        elif legal_system_info == 'basic':
+            st.info("📋 Legal: Mock Data Mode")
+        elif legal_system_info == 'limited':
+            st.warning("⚠️ Legal: Limited Mode")
+        else:
+            st.error("❌ Legal: Unavailable")
     
     if selected_page == "🏠 Dashboard":
         dashboard_interface()
@@ -1544,19 +1673,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    st.error("⚠️ Legal compliance system is not available. Please contact support.")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Try to Initialize Legal System"):
-            initialize_legal_compliance()
-            st.rerun()
-    with col2:
-        if st.button("Run Legal System Diagnostics"):
-            st.session_state['show_legal_diagnostics'] = True
-            st.rerun()
-    
-    
-
-
-

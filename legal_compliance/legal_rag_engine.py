@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# legal_compliance/legal_rag_engine.py - FIXED Legal RAG Engine with proper error handling
+# legal_compliance/legal_rag_engine.py - FIXED Legal RAG Engine with Weaviate Cloud connection
 
 import os
 import json
@@ -13,7 +13,7 @@ logger = logging.getLogger("legal_compliance")
 
 class LegalRAGEngine:
     """
-    FIXED Legal-specific RAG engine that properly queries LegalDocument class in Weaviate
+    FIXED Legal-specific RAG engine that properly queries LegalDocument class in Weaviate Cloud
     with correct property mappings and robust error handling
     """
     
@@ -25,14 +25,37 @@ class LegalRAGEngine:
         self.cache = {}
         self.query_history = []
         
-        # Initialize OpenAI client if API key provided
+        # Initialize OpenAI client if API key provided but no client
         if openai_api_key and not self.openai_client:
             try:
                 import openai
-                openai.api_key = openai_api_key
-                self.openai_client = openai
+                # Handle both v0.x and v1.x OpenAI client initialization
+                if hasattr(openai, 'OpenAI'):
+                    # OpenAI v1.x
+                    self.openai_client = openai.OpenAI(api_key=openai_api_key)
+                else:
+                    # OpenAI v0.x
+                    openai.api_key = openai_api_key
+                    self.openai_client = openai
+                logger.info("OpenAI client initialized for legal RAG engine")
             except ImportError:
                 logger.warning("OpenAI library not available")
+            except Exception as e:
+                logger.warning(f"Could not initialize OpenAI client: {e}")
+        elif not self.openai_client and not openai_api_key:
+            # Try to get API key from environment
+            api_key = os.getenv("OPENAI_API_KEY")
+            if api_key:
+                try:
+                    import openai
+                    if hasattr(openai, 'OpenAI'):
+                        self.openai_client = openai.OpenAI(api_key=api_key)
+                    else:
+                        openai.api_key = api_key
+                        self.openai_client = openai
+                    logger.info("OpenAI client initialized from environment variable")
+                except Exception as e:
+                    logger.warning(f"Could not initialize OpenAI client from env: {e}")
         
         # Legal-specific configuration
         self.temperature = 0.2  # Lower temperature for legal accuracy
@@ -56,20 +79,67 @@ class LegalRAGEngine:
             'chunk_index': 'chunkIndex'
         }
         
-        logger.info("FIXED Legal RAG Engine initialized with robust error handling")
+        # Test Weaviate connection
+        self._test_weaviate_connection()
+        
+        logger.info("FIXED Legal RAG Engine initialized with Weaviate Cloud support")
+    
+    def _test_weaviate_connection(self):
+        """Test connection to Weaviate Cloud"""
+        if not self.weaviate_client:
+            logger.warning("No Weaviate client provided - will use mock data")
+            return False
+        
+        try:
+            is_ready = self.weaviate_client.is_ready()
+            if is_ready:
+                logger.info("Weaviate Cloud connection verified for legal RAG")
+                
+                # Test if LegalDocument class exists
+                schema = self.weaviate_client.schema.get()
+                legal_class_found = False
+                for class_def in schema.get("classes", []):
+                    if class_def["class"] == self.legal_class:
+                        legal_class_found = True
+                        logger.info(f"Found {self.legal_class} class in Weaviate Cloud")
+                        break
+                
+                if not legal_class_found:
+                    logger.warning(f"{self.legal_class} class not found in Weaviate Cloud - will use mock data")
+                    return False
+                
+                # Test document count
+                try:
+                    result = self.weaviate_client.query.aggregate(self.legal_class).with_meta_count().do()
+                    if result and "data" in result and "Aggregate" in result["data"]:
+                        agg_data = result["data"]["Aggregate"].get(self.legal_class, [])
+                        if agg_data and "meta" in agg_data[0]:
+                            doc_count = agg_data[0]["meta"]["count"]
+                            logger.info(f"Found {doc_count} legal documents in Weaviate Cloud")
+                            return True
+                except Exception as e:
+                    logger.warning(f"Could not count legal documents: {e}")
+                
+                return True
+            else:
+                logger.warning("Weaviate Cloud not ready for legal RAG")
+                return False
+        except Exception as e:
+            logger.error(f"Error testing Weaviate Cloud connection: {e}")
+            return False
     
     def search_legal_documents(self, query: str, limit: int = 10, 
                               document_type: str = None, jurisdiction: str = None,
                               practice_area: str = None) -> List[Dict]:
         """
-        FIXED: Search legal documents in Weaviate with proper error handling for None results
+        FIXED: Search legal documents in Weaviate Cloud with proper error handling
         """
         try:
             if not self.weaviate_client:
                 logger.warning("Weaviate client not available - using mock data")
                 return self._get_mock_legal_documents(query, limit)
             
-            logger.info(f"Searching legal documents for: {query}")
+            logger.info(f"Searching legal documents in Weaviate Cloud for: {query}")
             
             # Build the query with CORRECT property names from your schema
             properties_to_retrieve = [
@@ -87,33 +157,47 @@ class LegalRAGEngine:
                 "chunkIndex"
             ]
             
-            # Start with a basic query - try semantic search first
+            # Start with semantic search - FIXED VERSION
             query_builder = None
             try:
-                # Try semantic search first if vectorizer is available
+                # Try semantic search with proper error handling
                 query_builder = (
                     self.weaviate_client.query
-                    .get(self.legal_class, properties_to_retrieve) 
-                    .with_near_text({"concepts": [query]})
+                    .get(self.legal_class, properties_to_retrieve)
+                    .with_near_text({
+                        "concepts": [query],
+                        "certainty": 0.7  # Add certainty threshold
+                    })
                     .with_limit(limit)
                 )
-                logger.debug("Using semantic search with near_text")
+                logger.debug("Using semantic search with near_text for legal documents")
             except Exception as semantic_error:
-                logger.warning(f"Semantic search not available, using basic query: {semantic_error}")
+                logger.warning(f"Semantic search setup failed: {semantic_error}")
+                # Try semantic search with different parameters
                 try:
-                    # Fallback to basic query without semantic search
                     query_builder = (
                         self.weaviate_client.query
                         .get(self.legal_class, properties_to_retrieve)
+                        .with_near_text({"concepts": [query]})  # Simpler version
                         .with_limit(limit)
                     )
-                    logger.debug("Using basic query without semantic search")
-                except Exception as basic_error:
-                    logger.error(f"Even basic query failed: {basic_error}")
-                    return self._get_mock_legal_documents(query, limit)
+                    logger.debug("Using simplified semantic search")
+                except Exception as simple_semantic_error:
+                    logger.warning(f"Simplified semantic search failed: {simple_semantic_error}")
+                    # Fallback to basic query as last resort
+                    try:
+                        query_builder = (
+                            self.weaviate_client.query
+                            .get(self.legal_class, properties_to_retrieve)
+                            .with_limit(limit)
+                        )
+                        logger.debug("Fallback to basic query (no semantic search)")
+                    except Exception as basic_error:
+                        logger.error(f"All query types failed: {basic_error}")
+                        return self._get_mock_legal_documents(query, limit)
             
             if not query_builder:
-                logger.error("Could not create query builder")
+                logger.error("Could not create query builder for legal documents")
                 return self._get_mock_legal_documents(query, limit)
             
             # Add filters if specified using CORRECT property names
@@ -150,46 +234,89 @@ class LegalRAGEngine:
                             "operator": "And",
                             "operands": where_conditions
                         })
-                    logger.debug(f"Applied {len(where_conditions)} filters")
+                    logger.debug(f"Applied {len(where_conditions)} filters to legal document search")
                 except Exception as filter_error:
-                    logger.warning(f"Could not apply filters: {filter_error}")
+                    logger.warning(f"Could not apply filters to legal search: {filter_error}")
                     # Continue without filters
             
             # Execute the query with comprehensive error handling
             result = None
             try:
+                logger.info(f"Executing semantic search query for legal documents: '{query}'")
                 result = query_builder.do()
-                logger.debug("Query executed successfully")
+                logger.info(f"Query executed successfully, result type: {type(result)}")
+                
+                # Debug the result structure
+                if result is None:
+                    logger.warning("Query returned None - this indicates semantic search failure")
+                    # Try a basic query instead
+                    logger.info("Attempting fallback to basic query...")
+                    fallback_result = (
+                        self.weaviate_client.query
+                        .get(self.legal_class, properties_to_retrieve)
+                        .with_limit(limit)
+                        .do()
+                    )
+                    if fallback_result:
+                        logger.info("Fallback basic query successful")
+                        result = fallback_result
+                    else:
+                        logger.warning("Even fallback basic query returned None")
+                elif isinstance(result, dict):
+                    logger.info(f"Query result keys: {list(result.keys())}")
+                    if "data" in result:
+                        data_keys = list(result["data"].keys()) if isinstance(result["data"], dict) else "Not a dict"
+                        logger.info(f"Result data keys: {data_keys}")
+                else:
+                    logger.warning(f"Unexpected result type: {type(result)}")
+                    
             except Exception as query_error:
-                logger.error(f"Query execution failed: {query_error}")
-                return self._get_mock_legal_documents(query, limit)
+                logger.error(f"Legal document query execution failed: {query_error}")
+                # Try one more fallback - simple query without any filters
+                try:
+                    logger.info("Attempting emergency fallback query...")
+                    result = (
+                        self.weaviate_client.query
+                        .get(self.legal_class, ["content", "documentTitle", "documentType"])
+                        .with_limit(limit)
+                        .do()
+                    )
+                    if result:
+                        logger.info("Emergency fallback query successful")
+                    else:
+                        logger.error("Emergency fallback also returned None")
+                except Exception as fallback_error:
+                    logger.error(f"Emergency fallback failed: {fallback_error}")
+                
+                if not result:
+                    return self._get_mock_legal_documents(query, limit)
             
             # FIXED: Handle None result explicitly
             if result is None:
-                logger.warning("Weaviate query returned None - using fallback")
+                logger.warning("Weaviate legal query returned None - using fallback")
                 return self._get_mock_legal_documents(query, limit)
             
             # FIXED: Check result structure before accessing
             if not isinstance(result, dict):
-                logger.warning(f"Unexpected result type: {type(result)} - using fallback")
+                logger.warning(f"Unexpected legal result type: {type(result)} - using fallback")
                 return self._get_mock_legal_documents(query, limit)
             
             if "data" not in result:
-                logger.warning("No 'data' key in result - using fallback")
+                logger.warning("No 'data' key in legal result - using fallback")
                 return self._get_mock_legal_documents(query, limit)
             
             if not isinstance(result["data"], dict):
-                logger.warning(f"Result data is not dict: {type(result['data'])} - using fallback")
+                logger.warning(f"Legal result data is not dict: {type(result['data'])} - using fallback")
                 return self._get_mock_legal_documents(query, limit)
             
             if "Get" not in result["data"]:
-                logger.warning("No 'Get' key in result data - using fallback")
+                logger.warning("No 'Get' key in legal result data - using fallback")
                 return self._get_mock_legal_documents(query, limit)
             
             # FIXED: Safely get the legal data
             get_data = result["data"]["Get"]
             if not isinstance(get_data, dict):
-                logger.warning(f"Get data is not dict: {type(get_data)} - using fallback")
+                logger.warning(f"Legal Get data is not dict: {type(get_data)} - using fallback")
                 return self._get_mock_legal_documents(query, limit)
             
             legal_data = get_data.get(self.legal_class, [])
@@ -208,7 +335,7 @@ class LegalRAGEngine:
             for item in legal_data:
                 # FIXED: Handle each item safely
                 if not isinstance(item, dict):
-                    logger.warning(f"Skipping non-dict item: {type(item)}")
+                    logger.warning(f"Skipping non-dict legal item: {type(item)}")
                     continue
                 
                 try:
@@ -227,24 +354,24 @@ class LegalRAGEngine:
                         "word_count": int(item.get("wordCount", 0)) if item.get("wordCount") is not None else 0,
                         "chunk_index": int(item.get("chunkIndex", 0)) if item.get("chunkIndex") is not None else 0,
                         "type": "legal_document",
-                        "source": "Legal Database"
+                        "source": "Weaviate Cloud Legal Database"
                     }
                     documents.append(document)
                 except Exception as doc_error:
-                    logger.warning(f"Error processing document item: {doc_error}")
+                    logger.warning(f"Error processing legal document item: {doc_error}")
                     continue
             
-            logger.info(f"Successfully found {len(documents)} legal documents from Weaviate")
+            logger.info(f"Successfully found {len(documents)} legal documents from Weaviate Cloud")
             
             # If no documents found, return mock data for demonstration
             if not documents:
-                logger.info("No documents found in Weaviate, returning mock data for demonstration")
+                logger.info("No legal documents found in Weaviate Cloud, returning mock data for demonstration")
                 return self._get_mock_legal_documents(query, limit)
             
             return documents
             
         except Exception as e:
-            logger.error(f"Unexpected error searching legal documents in Weaviate: {e}")
+            logger.error(f"Unexpected error searching legal documents in Weaviate Cloud: {e}")
             logger.error(f"Error details: {str(e)}")
             import traceback
             logger.debug(traceback.format_exc())
@@ -298,6 +425,8 @@ class LegalRAGEngine:
             
             # Generate response using OpenAI
             response_text = ""
+            model_used = "fallback"
+            
             if self.openai_client:
                 try:
                     # Try different OpenAI client versions
@@ -309,7 +438,7 @@ class LegalRAGEngine:
                                 {
                                     "role": "system", 
                                     "content": """You are an expert legal analyst specializing in Saudi Arabian law and regulations. 
-                                    You provide accurate, well-researched legal analysis based on the provided legal documents. 
+                                    You provide accurate, well-researched legal analysis based on the provided legal documents from our database. 
                                     Always include appropriate disclaimers about seeking professional legal advice for specific situations.
                                     Be precise with citations and clearly distinguish between mandatory requirements and recommendations."""
                                 },
@@ -319,6 +448,7 @@ class LegalRAGEngine:
                             max_tokens=self.max_tokens
                         )
                         response_text = response.choices[0].message.content
+                        model_used = "gpt-4"
                     else:
                         # OpenAI v1.x
                         response = self.openai_client.chat.completions.create(
@@ -327,7 +457,7 @@ class LegalRAGEngine:
                                 {
                                     "role": "system", 
                                     "content": """You are an expert legal analyst specializing in Saudi Arabian law and regulations. 
-                                    You provide accurate, well-researched legal analysis based on the provided legal documents. 
+                                    You provide accurate, well-researched legal analysis based on the provided legal documents from our database. 
                                     Always include appropriate disclaimers about seeking professional legal advice for specific situations.
                                     Be precise with citations and clearly distinguish between mandatory requirements and recommendations."""
                                 },
@@ -337,13 +467,16 @@ class LegalRAGEngine:
                             max_tokens=self.max_tokens
                         )
                         response_text = response.choices[0].message.content
+                        model_used = "gpt-4"
                     
                 except Exception as openai_error:
                     logger.error(f"OpenAI API error: {openai_error}")
                     response_text = self._generate_fallback_response(query, legal_documents)
+                    model_used = "fallback"
             else:
                 logger.warning("OpenAI client not available, using fallback response")
                 response_text = self._generate_fallback_response(query, legal_documents)
+                model_used = "fallback"
             
             # Extract citations if requested
             citations = []
@@ -363,11 +496,12 @@ class LegalRAGEngine:
                     "jurisdiction": jurisdiction,
                     "practice_area": practice_area
                 },
-                "search_method": "weaviate_semantic_search",
-                "model_used": "gpt-4" if self.openai_client else "fallback"
+                "search_method": "weaviate_cloud_semantic_search",
+                "model_used": model_used,
+                "source": "Weaviate Cloud Legal Database"
             }
             
-            logger.info(f"Generated legal response with {len(legal_documents)} documents")
+            logger.info(f"Generated legal response with {len(legal_documents)} documents using {model_used}")
             return legal_response
             
         except Exception as e:
@@ -386,7 +520,7 @@ class LegalRAGEngine:
         if not documents:
             return "=== NO LEGAL DOCUMENTS AVAILABLE ==="
         
-        context = "=== LEGAL DOCUMENTS CONTEXT ===\n\n"
+        context = "=== LEGAL DOCUMENTS FROM WEAVIATE CLOUD ===\n\n"
         
         for i, doc in enumerate(documents, 1):
             if not isinstance(doc, dict):
@@ -413,7 +547,7 @@ class LegalRAGEngine:
     def _create_comprehensive_legal_prompt(self, query: str, context: str, include_citations: bool) -> str:
         """Create a comprehensive legal-specific prompt"""
         prompt = f"""
-Based on the provided legal documents from the Saudi Arabian legal database, please provide a comprehensive legal analysis for the following question:
+Based on the legal documents from our Weaviate Cloud legal database, please provide a comprehensive legal analysis for the following question:
 
 QUESTION: {query}
 
@@ -448,7 +582,7 @@ LEGAL ANALYSIS STRUCTURE:
 [Provide actionable recommendations]
 
 **Legal Disclaimer:**
-This analysis is based on the provided legal documents and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.
+This analysis is based on legal documents in our database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia.
 
 LEGAL ANALYSIS:
 """
@@ -457,7 +591,7 @@ LEGAL ANALYSIS:
     def _generate_fallback_response(self, query: str, documents: List[Dict]) -> str:
         """Generate a fallback response when OpenAI is not available"""
         if not documents:
-            return f"""I apologize, but I don't have access to specific legal documents to answer your question about '{query}'. 
+            return f"""I apologize, but I don't have access to specific legal documents in Weaviate Cloud to answer your question about '{query}'. 
 
 For legal matters in Saudi Arabia, I recommend:
 • Consulting with a qualified attorney licensed in Saudi Arabia
@@ -467,7 +601,7 @@ For legal matters in Saudi Arabia, I recommend:
 
 **Legal Disclaimer:** This information is for general guidance only and does not constitute legal advice. For specific legal matters, please consult with a qualified attorney licensed to practice in Saudi Arabia."""
 
-        response = f"Based on the available legal documents regarding '{query}', here are the key findings:\n\n"
+        response = f"Based on the legal documents from our Weaviate Cloud database regarding '{query}', here are the key findings:\n\n"
         
         # Extract key information from documents
         doc_types = set()
@@ -486,10 +620,10 @@ For legal matters in Saudi Arabia, I recommend:
         
         response += f"**Document Types Consulted:** {', '.join(doc_types)}\n"
         response += f"**Jurisdictions:** {', '.join(jurisdictions)}\n\n"
-        response += "**Key Information:**\n"
+        response += "**Key Information from Weaviate Cloud:**\n"
         response += '\n'.join(key_points[:3])
         
-        response += "\n\n**Legal Disclaimer:** This analysis is based on available legal documents and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia."
+        response += "\n\n**Legal Disclaimer:** This analysis is based on legal documents in our Weaviate Cloud database and is for informational purposes only. For specific legal advice applicable to your situation, please consult with a qualified attorney licensed to practice in Saudi Arabia."
         
         return response
     
@@ -506,13 +640,13 @@ For legal matters in Saudi Arabia, I recommend:
                     "file_name": str(doc.get('file_name', '')),
                     "page_number": str(doc.get('page_number', '')),
                     "processing_date": str(doc.get('processing_date', 'Unknown')),
-                    "source": "Legal Database"
+                    "source": "Weaviate Cloud Legal Database"
                 }
                 citations.append(citation)
         return citations
     
     def _get_mock_legal_documents(self, query: str, limit: int) -> List[Dict]:
-        """Generate mock legal documents when Weaviate is not available"""
+        """Generate mock legal documents when Weaviate Cloud is not available"""
         mock_docs = [
             {
                 "content": f"Saudi Arabian legal framework regarding {query}. This document outlines the key legal requirements and compliance procedures that must be followed according to Saudi law. Employment regulations in Saudi Arabia are governed by the Labor Law and related ministerial decisions.",
@@ -526,18 +660,32 @@ For legal matters in Saudi Arabia, I recommend:
                 "total_pages": 10,
                 "word_count": 50,
                 "type": "legal_document",
-                "source": "Mock Legal Database"
+                "source": "Mock Legal Database (Weaviate Cloud not available)"
+            },
+            {
+                "content": f"Commercial regulations in Saudi Arabia require compliance with various ministerial decisions and royal decrees. Companies must register with the Ministry of Commerce and Investment and obtain necessary licenses for commercial activities related to {query}.",
+                "title": f"Commercial Regulations Guide",
+                "document_type": "Regulatory Guide",
+                "jurisdiction": "Saudi Arabia",
+                "practice_area": "Commercial Law",
+                "file_name": "commercial_regulations.pdf",
+                "processing_date": datetime.now().isoformat(),
+                "page_number": 1,
+                "total_pages": 15,
+                "word_count": 75,
+                "type": "legal_document",
+                "source": "Mock Legal Database (Weaviate Cloud not available)"
             }
         ]
         return mock_docs[:limit]
     
     def get_legal_categories(self) -> List[str]:
-        """Get available legal document categories from Weaviate"""
+        """Get available legal document categories from Weaviate Cloud"""
         try:
             if not self.weaviate_client:
                 return self._get_default_categories()
             
-            # Query to get unique document types from Weaviate
+            # Query to get unique document types from Weaviate Cloud
             result = self.weaviate_client.query.aggregate(self.legal_class).with_fields("documentType { count }").do()
             
             categories = []
@@ -552,16 +700,16 @@ For legal matters in Saudi Arabia, I recommend:
             return sorted(list(set(categories))) if categories else self._get_default_categories()
             
         except Exception as e:
-            logger.error(f"Error getting legal categories from Weaviate: {e}")
+            logger.error(f"Error getting legal categories from Weaviate Cloud: {e}")
             return self._get_default_categories()
     
     def get_available_jurisdictions(self) -> List[str]:
-        """Get available jurisdictions from Weaviate"""
+        """Get available jurisdictions from Weaviate Cloud"""
         try:
             if not self.weaviate_client:
                 return ["Saudi Arabia", "GCC", "International"]
             
-            # Query to get unique jurisdictions from Weaviate
+            # Query to get unique jurisdictions from Weaviate Cloud
             result = self.weaviate_client.query.aggregate(self.legal_class).with_fields("jurisdiction { count }").do()
             
             jurisdictions = []
@@ -576,16 +724,16 @@ For legal matters in Saudi Arabia, I recommend:
             return sorted(list(set(jurisdictions))) if jurisdictions else ["Saudi Arabia", "GCC", "International"]
             
         except Exception as e:
-            logger.error(f"Error getting jurisdictions from Weaviate: {e}")
+            logger.error(f"Error getting jurisdictions from Weaviate Cloud: {e}")
             return ["Saudi Arabia", "GCC", "International"]
     
     def get_available_practice_areas(self) -> List[str]:
-        """Get available practice areas from Weaviate"""
+        """Get available practice areas from Weaviate Cloud"""
         try:
             if not self.weaviate_client:
                 return self._get_default_practice_areas()
             
-            # Query to get unique practice areas from Weaviate
+            # Query to get unique practice areas from Weaviate Cloud
             result = self.weaviate_client.query.aggregate(self.legal_class).with_fields("practiceArea { count }").do()
             
             practice_areas = []
@@ -600,11 +748,11 @@ For legal matters in Saudi Arabia, I recommend:
             return sorted(list(set(practice_areas))) if practice_areas else self._get_default_practice_areas()
             
         except Exception as e:
-            logger.error(f"Error getting practice areas from Weaviate: {e}")
+            logger.error(f"Error getting practice areas from Weaviate Cloud: {e}")
             return self._get_default_practice_areas()
     
     def _get_default_categories(self) -> List[str]:
-        """Default legal categories when Weaviate is not available"""
+        """Default legal categories when Weaviate Cloud is not available"""
         return [
             "Corporate Law", "Contract Law", "Regulatory Compliance", 
             "Employment Law", "Commercial Law", "Banking Law",
@@ -613,7 +761,7 @@ For legal matters in Saudi Arabia, I recommend:
         ]
     
     def _get_default_practice_areas(self) -> List[str]:
-        """Default practice areas when Weaviate is not available"""
+        """Default practice areas when Weaviate Cloud is not available"""
         return [
             "General Practice", "Corporate Law", "Healthcare Law",
             "Construction Law", "Employment Law", "Banking & Finance",
@@ -630,7 +778,7 @@ For legal matters in Saudi Arabia, I recommend:
         return self.query_history
     
     def test_connection(self) -> Dict[str, Any]:
-        """Test the connection to Weaviate and get schema information"""
+        """Test the connection to Weaviate Cloud and get schema information"""
         try:
             if not self.weaviate_client:
                 return {"status": "error", "message": "Weaviate client not available"}
@@ -664,7 +812,7 @@ For legal matters in Saudi Arabia, I recommend:
                 "legal_class_exists": legal_class_schema is not None,
                 "total_documents": total_docs,
                 "schema_properties": [prop["name"] for prop in legal_class_schema.get("properties", [])] if legal_class_schema else [],
-                "message": f"Connected to Weaviate with {total_docs} legal documents"
+                "message": f"Connected to Weaviate Cloud with {total_docs} legal documents"
             }
             
         except Exception as e:

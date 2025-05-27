@@ -1,0 +1,223 @@
+{
+  "timestamp": "2025-05-27T01:52:16.021590",
+  "tests_run": 25,
+  "tests_passed": 24,
+  "tests_failed": 1,
+  "test_details": [
+    {
+      "test_name": "Core Import - Dependency Container",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Successfully imported",
+      "timestamp": "2025-05-27T01:52:16.032586"
+    },
+    {
+      "test_name": "Core Import - System Initializer",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Successfully imported",
+      "timestamp": "2025-05-27T01:52:22.619900"
+    },
+    {
+      "test_name": "Core Import - Error Handling",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Successfully imported",
+      "timestamp": "2025-05-27T01:52:22.619900"
+    },
+    {
+      "test_name": "Core Import - Market Utils",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Successfully imported",
+      "timestamp": "2025-05-27T01:52:22.619900"
+    },
+    {
+      "test_name": "Core Import - Legal Compliance",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Successfully imported",
+      "timestamp": "2025-05-27T01:52:22.619900"
+    },
+    {
+      "test_name": "Dependency Container - Initialization",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Container initialized successfully",
+      "timestamp": "2025-05-27T01:52:22.619900"
+    },
+    {
+      "test_name": "Dependency Container - Service Registration",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Service registration working",
+      "timestamp": "2025-05-27T01:52:22.619900"
+    },
+    {
+      "test_name": "Dependency Container - System Overview",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Retrieved overview with 1 services",
+      "timestamp": "2025-05-27T01:52:22.619900"
+    },
+    {
+      "test_name": "System Initialization - Full System",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "System initialized in 2.84s",
+      "timestamp": "2025-05-27T01:52:25.457974"
+    },
+    {
+      "test_name": "System Initialization - Component Status",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "8/8 components initialized",
+      "timestamp": "2025-05-27T01:52:25.462006"
+    },
+    {
+      "test_name": "Market Intelligence - RAG Engine",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "RAG engine responding",
+      "timestamp": "2025-05-27T01:52:42.866564"
+    },
+    {
+      "test_name": "Market Intelligence - Web Search",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Web search responding",
+      "timestamp": "2025-05-27T01:52:48.261778"
+    },
+    {
+      "test_name": "Market Intelligence - Report Generator",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Report generator working",
+      "timestamp": "2025-05-27T01:56:03.909071"
+    },
+    {
+      "test_name": "Market Intelligence - Report System",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Report system working, 1 reports found",
+      "timestamp": "2025-05-27T01:56:03.909071"
+    },
+    {
+      "test_name": "Legal Compliance - RAG Engine Search",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Found 2 documents",
+      "timestamp": "2025-05-27T01:56:03.912413"
+    },
+    {
+      "test_name": "Legal Compliance - RAG Engine Response",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Response generation working",
+      "timestamp": "2025-05-27T01:56:03.912413"
+    },
+    {
+      "test_name": "Legal Compliance - Chatbot Session",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Session created: 12e63871",
+      "timestamp": "2025-05-27T01:56:03.912413"
+    },
+    {
+      "test_name": "Legal Compliance - Chatbot Response",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Legal question processed",
+      "timestamp": "2025-05-27T01:56:03.917699"
+    },
+    {
+      "test_name": "Legal Compliance - Session Management",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Session lifecycle working",
+      "timestamp": "2025-05-27T01:56:03.917699"
+    },
+    {
+      "test_name": "Legal Compliance - System Status",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Legal system status: basic",
+      "timestamp": "2025-05-27T01:56:03.917699"
+    },
+    {
+      "test_name": "E2E Market - Report Generation",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Generated report with 5 sections in 239.31s",
+      "timestamp": "2025-05-27T02:00:03.228302"
+    },
+    {
+      "test_name": "E2E Market - Report Conversation",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Report Q&A working",
+      "timestamp": "2025-05-27T02:00:03.228302"
+    },
+    {
+      "test_name": "E2E Legal - Complete Workflow",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Processed 3/3 questions successfully in 0.01s",
+      "timestamp": "2025-05-27T02:00:03.237967"
+    },
+    {
+      "test_name": "Performance - RAG Response Time",
+      "status": "❌ FAIL",
+      "passed": false,
+      "details": "RAG too slow: 24.41s",
+      "timestamp": "2025-05-27T02:00:27.652321"
+    },
+    {
+      "test_name": "Performance - Memory Usage",
+      "status": "✅ PASS",
+      "passed": true,
+      "details": "Using 391.1 MB RAM",
+      "timestamp": "2025-05-27T02:00:27.653320"
+    }
+  ],
+  "system_components": {
+    "total_services": 1,
+    "total_factories": 0,
+    "total_singletons": 0,
+    "services": [
+      "test_service"
+    ],
+    "factories": [],
+    "singletons": [],
+    "initialized": true,
+    "legal_system": {
+      "available": false,
+      "components": {
+        "legal_rag_engine": {
+          "available": false,
+          "type": "missing"
+        },
+        "legal_search_engine": {
+          "available": false,
+          "type": "missing"
+        },
+        "legal_chatbot": {
+          "available": false,
+          "type": "missing"
+        }
+      },
+      "missing_components": [
+        "legal_rag_engine",
+        "legal_search_engine",
+        "legal_chatbot"
+      ]
+    }
+  },
+  "performance_metrics": {
+    "initialization_time": 2.838073968887329,
+    "market_workflow_time": 239.31060242652893,
+    "legal_workflow_time": 0.00966501235961914,
+    "rag_response_time": 24.41435432434082,
+    "memory_usage_mb": 391.11328125
+  }
+}

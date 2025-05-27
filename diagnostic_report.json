@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-05-27T02:05:47.224565",
+  "issues_found": 1,
+  "issues": [
+    "Legal RAG engine not registered in container"
+  ],
+  "fixes": [
+    "Check legal component registration in system_initializer.py",
+    "Install and start Weaviate for better performance: docker run -p 8080:8080 semitechnologies/weaviate:latest"
+  ],
+  "system_status": "needs_attention"
+}
